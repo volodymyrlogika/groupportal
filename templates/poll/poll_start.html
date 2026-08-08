@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}{{ poll.title }} | Портал групи{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-lg-9">
+
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+                    <h1 class="fw-bold mb-1">
+                        {{ poll.title }}
+                    </h1>
+
+                    <p class="text-muted mb-0">
+                        Оберіть одну відповідь для кожного питання
+                    </p>
+                </div>
+
+                <a href="{% url 'poll_detail' poll.pk %}"
+                   class="btn btn-light border">
+
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Вийти
+
+                </a>
+
+            </div>
+
+
+            <!-- Questions -->
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {% for question in questions %}
+
+                    <div class="card border-0 shadow-sm mb-4">
+
+                        <div class="card-body p-4">
+
+                            <!-- Question number -->
+
+                            <div class="text-primary fw-semibold mb-2">
+                                Питання {{ forloop.counter }}
+                            </div>
+
+
+                            <!-- Question -->
+
+                            <h4 class="fw-bold mb-4">
+                                {{ question.text }}
+                            </h4>
+
+
+                            <!-- Answers -->
+
+                            <div class="d-grid gap-2">
+
+                                {% for choice in question.choices.all %}
+
+                                    <label class="answer-option">
+
+                                        <input
+                                            type="radio"
+                                            name="question_{{ question.pk }}"
+                                            value="{{ choice.pk }}"
+                                            required
+                                        >
+
+                                        <span>
+                                            {{ choice.text }}
+                                        </span>
+
+                                    </label>
+
+                                {% empty %}
+
+                                    <div class="alert alert-warning">
+                                        Для цього питання немає варіантів відповіді.
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- Submit -->
+
+                <div class="text-center mt-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-lg px-5"
+                    >
+
+                        <i class="bi bi-check-lg me-2"></i>
+
+                        Завершити тест
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.answer-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 15px 18px;
+
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.answer-option:hover {
+    border-color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+.answer-option input {
+    width: 18px;
+    height: 18px;
+
+    cursor: pointer;
+}
+
+.answer-option:has(input:checked) {
+    border-color: var(--bs-primary);
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+}
+
+</style>
+
+{% endblock %}
