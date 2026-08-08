@@ -99,3 +99,73 @@ class PollResultView(View):
             "percentage": percentage,
         }
         return render( request, "poll/poll_result.html", context )
+
+class PollQuestionView(View):
+
+    def get(self, request):
+        return render(
+            request,
+            "poll/poll_question.html"
+        )
+
+    def post(self, request):
+
+        # Створюємо тест
+        poll = Poll.objects.create(
+            title=request.POST.get("title"),
+            description=request.POST.get("description", ""),
+            created_by=request.user
+        )
+
+        # Знаходимо всі питання
+        question_numbers = []
+
+        for key in request.POST.keys():
+
+            if key.startswith("question_"):
+
+                number = key.replace("question_", "")
+
+                if number.isdigit():
+                    question_numbers.append(int(number))
+
+        # Створюємо питання
+        for number in sorted(question_numbers):
+
+            question_text = request.POST.get(
+                f"question_{number}"
+            )
+
+            if not question_text:
+                continue
+
+            question = poll.questions.create(
+                text=question_text,
+                question_type="multiple_choice",
+                order=number
+            )
+
+            # Правильна відповідь
+            correct_answer = request.POST.get(
+                f"correct_{number}"
+            )
+
+            # Створюємо 4 варіанти
+            for choice_number in range(1, 5):
+
+                choice_text = request.POST.get(
+                    f"choice_{number}_{choice_number}"
+                )
+
+                if not choice_text:
+                    continue
+
+                Choice.objects.create(
+                    question=question,
+                    text=choice_text,
+                    is_correct=(
+                        str(choice_number) == str(correct_answer)
+                    )
+                )
+
+        return redirect("poll_detail", pk=poll.pk)
