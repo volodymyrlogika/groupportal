@@ -1,0 +1,582 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if project %}
+        Edit Project
+    {% else %}
+        Add Project
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div style="
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 40px 0 60px;
+    color: #172033;
+">
+
+    <div class="container">
+
+        <!-- Page header -->
+
+        <div class="mb-4">
+
+            {% if project %}
+
+                <a
+                    href="{% url 'project_detail' project.pk %}"
+                    style="
+                        color: #64748b;
+                        text-decoration: none;
+                        font-size: 0.95rem;
+                    "
+                >
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Project
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{% url 'portfolio_detail' %}"
+                    style="
+                        color: #64748b;
+                        text-decoration: none;
+                        font-size: 0.95rem;
+                    "
+                >
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Portfolio
+                </a>
+
+            {% endif %}
+
+
+            <h1 style="
+                font-size: 2rem;
+                font-weight: 700;
+                color: #172033;
+                margin: 16px 0 6px;
+            ">
+                {% if project %}
+                    Edit Project
+                {% else %}
+                    Add Project
+                {% endif %}
+            </h1>
+
+            <p style="
+                color: #64748b;
+                margin: 0;
+            ">
+                {% if project %}
+                    Update the information about your project.
+                {% else %}
+                    Add a new project to your portfolio.
+                {% endif %}
+            </p>
+
+        </div>
+
+
+        <!-- Form card -->
+
+        <div style="
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+            padding: 32px;
+        ">
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- Non-field errors -->
+
+                {% if form.non_field_errors %}
+
+                    <div
+                        class="alert alert-danger"
+                        role="alert"
+                    >
+                        {{ form.non_field_errors }}
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Project information -->
+
+                <div class="mb-4">
+
+                    <h2 style="
+                        font-size: 1.15rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 4px;
+                    ">
+                        Project information
+                    </h2>
+
+                    <p style="
+                        color: #64748b;
+                        font-size: 0.9rem;
+                        margin-bottom: 20px;
+                    ">
+                        Provide the basic information about your project.
+                    </p>
+
+
+                    <!-- Title -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="{{ form.title.id_for_label }}"
+                            style="
+                                display: block;
+                                font-weight: 600;
+                                color: #172033;
+                                margin-bottom: 7px;
+                            "
+                        >
+                            Project title
+                        </label>
+
+                        {{ form.title }}
+
+                        {% if form.title.errors %}
+
+                            <div style="
+                                color: #dc2626;
+                                font-size: 0.875rem;
+                                margin-top: 5px;
+                            ">
+                                {{ form.title.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Description -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="{{ form.description.id_for_label }}"
+                            style="
+                                display: block;
+                                font-weight: 600;
+                                color: #172033;
+                                margin-bottom: 7px;
+                            "
+                        >
+                            Description
+                        </label>
+
+                        {{ form.description }}
+
+                        {% if form.description.errors %}
+
+                            <div style="
+                                color: #dc2626;
+                                font-size: 0.875rem;
+                                margin-top: 5px;
+                            ">
+                                {{ form.description.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Technologies -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="{{ form.technologies.id_for_label }}"
+                            style="
+                                display: block;
+                                font-weight: 600;
+                                color: #172033;
+                                margin-bottom: 7px;
+                            "
+                        >
+                            Technologies
+                        </label>
+
+                        {{ form.technologies }}
+
+                        {% if form.technologies.errors %}
+
+                            <div style="
+                                color: #dc2626;
+                                font-size: 0.875rem;
+                                margin-top: 5px;
+                            ">
+                                {{ form.technologies.errors }}
+                            </div>
+
+                        {% endif %}
+
+                        <div style="
+                            color: #64748b;
+                            font-size: 0.85rem;
+                            margin-top: 5px;
+                        ">
+                            Separate technologies with commas.
+                            Example: Python, Django, HTML, CSS
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Project links -->
+
+                <div style="
+                    border-top: 1px solid #e2e8f0;
+                    padding-top: 24px;
+                    margin-top: 28px;
+                    margin-bottom: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 4px;
+                    ">
+                        Project links
+                    </h2>
+
+                    <p style="
+                        color: #64748b;
+                        font-size: 0.9rem;
+                        margin-bottom: 20px;
+                    ">
+                        Add links where your project can be viewed or accessed.
+                    </p>
+
+
+                    <!-- Project URL -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="{{ form.project_url.id_for_label }}"
+                            style="
+                                display: block;
+                                font-weight: 600;
+                                color: #172033;
+                                margin-bottom: 7px;
+                            "
+                        >
+                            <i class="bi bi-globe2 me-1"></i>
+                            Project URL
+                        </label>
+
+                        {{ form.project_url }}
+
+                        {% if form.project_url.errors %}
+
+                            <div style="
+                                color: #dc2626;
+                                font-size: 0.875rem;
+                                margin-top: 5px;
+                            ">
+                                {{ form.project_url.errors }}
+                            </div>
+
+                        {% endif %}
+
+                        <div style="
+                            color: #64748b;
+                            font-size: 0.85rem;
+                            margin-top: 5px;
+                        ">
+                            Link to the deployed or live version of the project.
+                        </div>
+
+                    </div>
+
+
+                    <!-- GitHub -->
+
+                    <div class="mb-2">
+
+                        <label
+                            for="{{ form.github_url.id_for_label }}"
+                            style="
+                                display: block;
+                                font-weight: 600;
+                                color: #172033;
+                                margin-bottom: 7px;
+                            "
+                        >
+                            <i class="bi bi-github me-1"></i>
+                            GitHub URL
+                        </label>
+
+                        {{ form.github_url }}
+
+                        {% if form.github_url.errors %}
+
+                            <div style="
+                                color: #dc2626;
+                                font-size: 0.875rem;
+                                margin-top: 5px;
+                            ">
+                                {{ form.github_url.errors }}
+                            </div>
+
+                        {% endif %}
+
+                        <div style="
+                            color: #64748b;
+                            font-size: 0.85rem;
+                            margin-top: 5px;
+                        ">
+                            Link to the project's source code.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Project file -->
+
+                <div style="
+                    border-top: 1px solid #e2e8f0;
+                    padding-top: 24px;
+                    margin-top: 28px;
+                    margin-bottom: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 4px;
+                    ">
+                        Project file
+                    </h2>
+
+                    <p style="
+                        color: #64748b;
+                        font-size: 0.9rem;
+                        margin-bottom: 20px;
+                    ">
+                        Optionally attach a file related to your project.
+                    </p>
+
+
+                    {% if project and project.project_file %}
+
+                        <div style="
+                            background: #f8fafc;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 8px;
+                            padding: 12px 15px;
+                            margin-bottom: 15px;
+                        ">
+
+                            <div class="d-flex align-items-center gap-2">
+
+                                <i
+                                    class="bi bi-file-earmark"
+                                    style="
+                                        color: #2563eb;
+                                        font-size: 1.3rem;
+                                    "
+                                ></i>
+
+                                <div>
+
+                                    <div style="
+                                        font-weight: 600;
+                                        color: #172033;
+                                        font-size: 0.9rem;
+                                    ">
+                                        Current file
+                                    </div>
+
+                                    <a
+                                        href="{{ project.project_file.url }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style="
+                                            color: #2563eb;
+                                            text-decoration: none;
+                                            font-size: 0.85rem;
+                                        "
+                                    >
+                                        {{ project.project_file.name }}
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <label
+                        for="{{ form.project_file.id_for_label }}"
+                        style="
+                            display: block;
+                            font-weight: 600;
+                            color: #172033;
+                            margin-bottom: 7px;
+                        "
+                    >
+                        {% if project and project.project_file %}
+                            Replace file
+                        {% else %}
+                            Upload file
+                        {% endif %}
+                    </label>
+
+                    {{ form.project_file }}
+
+                    {% if form.project_file.errors %}
+
+                        <div style="
+                            color: #dc2626;
+                            font-size: 0.875rem;
+                            margin-top: 5px;
+                        ">
+                            {{ form.project_file.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Form actions -->
+
+                <div style="
+                    border-top: 1px solid #e2e8f0;
+                    padding-top: 24px;
+                    margin-top: 28px;
+                ">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                        <div>
+
+                            {% if project %}
+
+                                <a
+                                    href="{% url 'project_delete' project.pk %}"
+                                    style="
+                                        color: #dc2626;
+                                        text-decoration: none;
+                                        font-size: 0.9rem;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    <i class="bi bi-trash me-1"></i>
+                                    Delete project
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="d-flex gap-2">
+
+                            {% if project %}
+
+                                <a
+                                    href="{% url 'project_detail' project.pk %}"
+                                    class="btn"
+                                    style="
+                                        background: #ffffff;
+                                        border: 1px solid #e2e8f0;
+                                        color: #475569;
+                                        border-radius: 7px;
+                                        padding: 9px 18px;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    Cancel
+                                </a>
+
+                            {% else %}
+
+                                <a
+                                    href="{% url 'portfolio_detail' %}"
+                                    class="btn"
+                                    style="
+                                        background: #ffffff;
+                                        border: 1px solid #e2e8f0;
+                                        color: #475569;
+                                        border-radius: 7px;
+                                        padding: 9px 18px;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    Cancel
+                                </a>
+
+                            {% endif %}
+
+
+                            <button
+                                type="submit"
+                                class="btn"
+                                style="
+                                    background: #2563eb;
+                                    border: 1px solid #2563eb;
+                                    color: #ffffff;
+                                    border-radius: 7px;
+                                    padding: 9px 18px;
+                                    font-weight: 500;
+                                "
+                            >
+                                <i class="bi bi-check-lg me-1"></i>
+
+                                {% if project %}
+                                    Save Changes
+                                {% else %}
+                                    Create Project
+                                {% endif %}
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

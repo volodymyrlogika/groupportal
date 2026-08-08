@@ -1,0 +1,664 @@
+
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+
+<div style="
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 40px 0 60px;
+    color: #172033;
+">
+
+    <div class="container">
+
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
+        <div class="mb-4">
+
+            <a
+                href="{% url 'portfolio_detail' %}"
+                style="
+                    color: #64748b;
+                    text-decoration: none;
+                    font-size: 0.95rem;
+                "
+            >
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Portfolio
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             PROJECT HEADER
+             ===================================================== -->
+
+        <div style="
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+            padding: 32px;
+            margin-bottom: 28px;
+        ">
+
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-4">
+
+                <div>
+
+                    <div style="
+                        color: #64748b;
+                        font-size: 0.85rem;
+                        margin-bottom: 8px;
+                    ">
+                        Portfolio Project
+                    </div>
+
+                    <h1 style="
+                        font-size: 2.2rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin: 0 0 12px;
+                    ">
+                        {{ project.title }}
+                    </h1>
+
+                    {% if project.description %}
+
+                        <p style="
+                            color: #64748b;
+                            line-height: 1.7;
+                            max-width: 800px;
+                            margin: 0;
+                        ">
+                            {{ project.description|linebreaksbr }}
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Project actions -->
+
+                <div class="d-flex gap-2 flex-wrap">
+
+                    <a
+                        href="{% url 'project_edit' project.pk %}"
+                        class="btn"
+                        style="
+                            background: #2563eb;
+                            border: 1px solid #2563eb;
+                            color: #ffffff;
+                            border-radius: 7px;
+                            padding: 9px 16px;
+                            font-weight: 500;
+                        "
+                    >
+                        <i class="bi bi-pencil me-1"></i>
+                        Edit
+                    </a>
+
+                    <a
+                        href="{% url 'project_delete' project.pk %}"
+                        class="btn"
+                        style="
+                            background: #ffffff;
+                            border: 1px solid #dc2626;
+                            color: #dc2626;
+                            border-radius: 7px;
+                            padding: 9px 16px;
+                            font-weight: 500;
+                        "
+                    >
+                        <i class="bi bi-trash me-1"></i>
+                        Delete
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MAIN CONTENT
+             ===================================================== -->
+
+        <div class="row g-4">
+
+            <!-- =================================================
+                 LEFT COLUMN
+                 ================================================= -->
+
+            <div class="col-12 col-lg-8">
+
+
+                <!-- Project images -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 24px;
+                    margin-bottom: 24px;
+                ">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <h2 style="
+                            font-size: 1.2rem;
+                            font-weight: 700;
+                            color: #172033;
+                            margin: 0;
+                        ">
+                            Project Images
+                        </h2>
+
+                        <a
+                            href="{% url 'project_image_add' project.pk %}"
+                            class="btn"
+                            style="
+                                background: #ffffff;
+                                border: 1px solid #2563eb;
+                                color: #2563eb;
+                                border-radius: 7px;
+                                padding: 7px 12px;
+                                font-size: 0.9rem;
+                                font-weight: 500;
+                            "
+                        >
+                            <i class="bi bi-plus-lg me-1"></i>
+                            Add image
+                        </a>
+
+                    </div>
+
+
+                    {% if project.images.all %}
+
+                        <div class="row g-3">
+
+                            {% for image in project.images.all %}
+
+                                <div class="col-12 col-md-6">
+
+                                    <div style="
+                                        border: 1px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        overflow: hidden;
+                                        background: #f8fafc;
+                                    ">
+
+                                        <img
+                                            src="{{ image.image.url }}"
+                                            alt="{{ project.title }}"
+                                            style="
+                                                width: 100%;
+                                                height: 220px;
+                                                object-fit: cover;
+                                                display: block;
+                                            "
+                                        >
+
+                                        <div style="
+                                            padding: 10px;
+                                            background: #ffffff;
+                                        ">
+
+                                            <div class="d-flex justify-content-end">
+
+                                                <a
+                                                    href="{% url 'project_image_delete' image.pk %}"
+                                                    style="
+                                                        color: #dc2626;
+                                                        text-decoration: none;
+                                                        font-size: 0.85rem;
+                                                        font-weight: 500;
+                                                    "
+                                                >
+                                                    <i class="bi bi-trash me-1"></i>
+                                                    Remove
+                                                </a>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                    {% else %}
+
+                        <div style="
+                            background: #f8fafc;
+                            border: 1px dashed #cbd5e1;
+                            border-radius: 10px;
+                            padding: 40px 20px;
+                            text-align: center;
+                        ">
+
+                            <div style="
+                                width: 56px;
+                                height: 56px;
+                                margin: 0 auto 14px;
+                                border-radius: 50%;
+                                background: #dbeafe;
+                                color: #2563eb;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 24px;
+                            ">
+                                <i class="bi bi-images"></i>
+                            </div>
+
+                            <h3 style="
+                                font-size: 1rem;
+                                font-weight: 700;
+                                color: #172033;
+                                margin-bottom: 6px;
+                            ">
+                                No images yet
+                            </h3>
+
+                            <p style="
+                                color: #64748b;
+                                font-size: 0.9rem;
+                                margin-bottom: 16px;
+                            ">
+                                Add screenshots or images that showcase your project.
+                            </p>
+
+                            <a
+                                href="{% url 'project_image_add' project.pk %}"
+                                class="btn"
+                                style="
+                                    background: #2563eb;
+                                    border: 1px solid #2563eb;
+                                    color: #ffffff;
+                                    border-radius: 7px;
+                                    padding: 8px 15px;
+                                    font-weight: 500;
+                                "
+                            >
+                                <i class="bi bi-plus-lg me-1"></i>
+                                Add image
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Description -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 15px;
+                    ">
+                        Description
+                    </h2>
+
+                    {% if project.description %}
+
+                        <div style="
+                            color: #475569;
+                            line-height: 1.8;
+                        ">
+                            {{ project.description|linebreaksbr }}
+                        </div>
+
+                    {% else %}
+
+                        <p style="
+                            color: #64748b;
+                            margin: 0;
+                        ">
+                            No description provided.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT COLUMN
+                 ================================================= -->
+
+            <div class="col-12 col-lg-4">
+
+
+                <!-- Technologies -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 24px;
+                    margin-bottom: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 15px;
+                    ">
+                        Technologies
+                    </h2>
+
+
+                    {% if project.technologies %}
+
+                        <div>
+
+                            {% for technology in project.technologies.split|slice:":12" %}
+
+                                <span style="
+                                    display: inline-block;
+                                    background: #dbeafe;
+                                    color: #1d4ed8;
+                                    font-size: 0.8rem;
+                                    font-weight: 500;
+                                    border-radius: 6px;
+                                    padding: 6px 9px;
+                                    margin: 0 4px 5px 0;
+                                ">
+                                    {{ technology }}
+                                </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <p style="
+                            color: #64748b;
+                            font-size: 0.9rem;
+                            margin: 0;
+                        ">
+                            No technologies specified.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Links -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 24px;
+                    margin-bottom: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 15px;
+                    ">
+                        Project Links
+                    </h2>
+
+
+                    {% if project.project_url %}
+
+                        <a
+                            href="{{ project.project_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="d-flex align-items-center gap-2"
+                            style="
+                                color: #2563eb;
+                                text-decoration: none;
+                                font-weight: 500;
+                                margin-bottom: 12px;
+                            "
+                        >
+                            <i class="bi bi-globe2"></i>
+                            Live Project
+                            <i class="bi bi-box-arrow-up-right ms-auto"></i>
+                        </a>
+
+                    {% endif %}
+
+
+                    {% if project.github_url %}
+
+                        <a
+                            href="{{ project.github_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="d-flex align-items-center gap-2"
+                            style="
+                                color: #2563eb;
+                                text-decoration: none;
+                                font-weight: 500;
+                                margin-bottom: 12px;
+                            "
+                        >
+                            <i class="bi bi-github"></i>
+                            GitHub Repository
+                            <i class="bi bi-box-arrow-up-right ms-auto"></i>
+                        </a>
+
+                    {% endif %}
+
+
+                    {% if not project.project_url and not project.github_url %}
+
+                        <p style="
+                            color: #64748b;
+                            font-size: 0.9rem;
+                            margin: 0;
+                        ">
+                            No project links provided.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Project file -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 15px;
+                    ">
+                        Project File
+                    </h2>
+
+
+                    {% if project.project_file %}
+
+                        <div style="
+                            background: #f8fafc;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 8px;
+                            padding: 12px;
+                        ">
+
+                            <div class="d-flex align-items-center gap-2">
+
+                                <div style="
+                                    width: 40px;
+                                    height: 40px;
+                                    border-radius: 8px;
+                                    background: #dbeafe;
+                                    color: #2563eb;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 20px;
+                                    flex-shrink: 0;
+                                ">
+                                    <i class="bi bi-file-earmark"></i>
+                                </div>
+
+                                <div style="
+                                    min-width: 0;
+                                ">
+
+                                    <div style="
+                                        color: #172033;
+                                        font-weight: 600;
+                                        font-size: 0.9rem;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
+                                    ">
+                                        {{ project.project_file.name }}
+                                    </div>
+
+                                    <a
+                                        href="{{ project.project_file.url }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style="
+                                            color: #2563eb;
+                                            text-decoration: none;
+                                            font-size: 0.85rem;
+                                        "
+                                    >
+                                        Open file
+                                        <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    {% else %}
+
+                        <p style="
+                            color: #64748b;
+                            font-size: 0.9rem;
+                            margin: 0;
+                        ">
+                            No project file attached.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             FOOTER ACTIONS
+             ===================================================== -->
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+
+            <a
+                href="{% url 'portfolio_detail' %}"
+                style="
+                    color: #64748b;
+                    text-decoration: none;
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                "
+            >
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Portfolio
+            </a>
+
+
+            <div class="d-flex gap-2">
+
+                <a
+                    href="{% url 'project_edit' project.pk %}"
+                    class="btn"
+                    style="
+                        background: #ffffff;
+                        border: 1px solid #e2e8f0;
+                        color: #475569;
+                        border-radius: 7px;
+                        padding: 8px 15px;
+                        font-weight: 500;
+                    "
+                >
+                    <i class="bi bi-pencil me-1"></i>
+                    Edit Project
+                </a>
+
+                <a
+                    href="{% url 'project_delete' project.pk %}"
+                    class="btn"
+                    style="
+                        background: #ffffff;
+                        border: 1px solid #dc2626;
+                        color: #dc2626;
+                        border-radius: 7px;
+                        padding: 8px 15px;
+                        font-weight: 500;
+                    "
+                >
+                    <i class="bi bi-trash me-1"></i>
+                    Delete Project
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
