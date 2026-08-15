@@ -1,9 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, View
-from poll.models import Choice
-
-from poll.models import Poll
+from poll.models import Choice, Poll, PollView, PollAttempt
 
 # Create your views here.
 class PollListView(ListView):
@@ -16,6 +14,18 @@ class PollDetailView(DetailView):
     template_name = "poll/poll_detail.html"
     context_object_name = "poll"
 
+    def get_object(self):
+        poll = super().get_object()
+
+        if self.request.user.is_authenticated:
+            PollView.objects.get_or_create(
+                poll=poll,
+                user=self.request.user
+            )
+
+        return poll
+
+
 class PollStartView(View):
 
     def get(self, request, pk):
@@ -27,6 +37,24 @@ class PollStartView(View):
 
         questions = poll.questions.prefetch_related("choices").all()
 
+        if request.user.is_authenticated:
+            session_key = f"poll_attempt_{poll.pk}"
+
+        if not request.session.get(session_key):
+            PollAttempt.objects.create(
+                poll=poll,
+                user=request.user
+            )
+            request.session[session_key] = True
+            return render(
+                request,
+                "poll/poll_start.html",
+                {
+                    "poll": poll,
+                    "questions": questions,
+                }
+            )
+        
         context = {
             "poll": poll,
             "questions": questions,
@@ -141,7 +169,6 @@ class PollQuestionView(View):
 
             question = poll.questions.create(
                 text=question_text,
-                question_type="multiple_choice",
                 order=number
             )
 

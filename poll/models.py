@@ -87,3 +87,56 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"{self.answered_by} - {self.question}"
+
+
+
+class PollView(models.Model):
+    poll = models.ForeignKey(
+        Poll,
+        on_delete=models.CASCADE,
+        related_name="views"
+    )
+
+    user = models.ForeignKey(
+        "auth.User",
+        on_delete=models.CASCADE,
+        related_name="poll_views"
+    )
+    view_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["poll", "user"],
+                name="unique_poll_view"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user} viwed {self.poll}"
+
+class PollAttempt(models.Model):
+    poll = models.ForeignKey(
+        Poll,
+        on_delete=models.CASCADE,
+        related_name="attempts"
+    )
+
+    user = models.ForeignKey(
+        "auth.User",
+        on_delete=models.CASCADE,
+        related_name="poll_attempts"
+    )
+
+    started_at = models.DateTimeField(auto_now_add=True)
+
+    completed_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    class Meta:
+        ordering = ["-started_at"]
+
+    def __str__(self):
+        return f"{self.user} - {self.poll}"

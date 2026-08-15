@@ -74,20 +74,45 @@
 
 
                             <!-- Information -->
-                            <div class="d-flex align-items-center text-muted mb-4">
+                            <div class="d-flex flex-wrap align-items-center gap-3 text-muted mb-4">
 
-                                <i class="bi bi-question-circle me-2"></i>
+                                <!-- Questions -->
 
-                                <span>
-                                    {{ poll.questions.count }}
-                                    {% if poll.questions.count == 1 %}
-                                        питання
-                                    {% elif poll.questions.count >= 2 and poll.questions.count <= 4 %}
-                                        питання
-                                    {% else %}
-                                        питань
-                                    {% endif %}
-                                </span>
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <i class="bi bi-question-circle"></i>
+
+                                    <span>
+                                        {{ poll.questions.count }} питань
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Views -->
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <i class="bi bi-eye"></i>
+
+                                    <span>
+                                        {{ poll.views.count }}
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Attempts -->
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <i class="bi bi-person-check"></i>
+
+                                    <span>
+                                        {{ poll.attempts.count }}
+                                    </span>
+
+                                </div>
 
                             </div>
 
