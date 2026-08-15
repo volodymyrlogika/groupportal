@@ -1,3 +1,17 @@
-<header>
-    
+{% load static %}
+<header class="site-header">
+    <nav class="site-nav">
+        <a href="/" class="brand">GroupPortal</a>
+
+        <ul class="nav-links">
+            <li><a href="/">Головна</a></li>
+            <li><a href="/">Форум</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'logout' %}">Вийти</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Увійти</a></li>
+                <li><a href="{% url 'register' %}" class="btn-register">Реєстрація</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 </header>
