@@ -1,74 +1,64 @@
-# journal/views.py
-
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Grade, Subject
-from django.views.generic import UpdateView, DeleteView
+from .forms import GradeForm
 
-# Перевірте, чи є у вас цей клас:
+# Перегляд оцінок для учня
 class StudentJournalView(LoginRequiredMixin, ListView):
     model = Grade
     template_name = 'journal/student_journal.html'
     context_object_name = 'grades'
 
     def get_queryset(self):
-        return Grade.objects.filter(student=self.request.user)\
-                            .select_related('lesson', 'lesson__subject', 'grade_type')
+        return Grade.objects.filter(student=self.request.user)
 
-
-class StaffOrModeratorRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        user = self.request.user
-        return user.is_authenticated and (
-            user.is_staff or 
-            user.is_superuser or 
-            user.groups.filter(name='Moderators').exists()
-        )
-
-
-class AllGradesListView(StaffOrModeratorRequiredMixin, ListView):
+# Перегляд усіх оцінок для вчителя/адміна
+class AllGradesListView(LoginRequiredMixin, ListView):
     model = Grade
     template_name = 'journal/all_grades.html'
     context_object_name = 'grades'
-    paginate_by = 20
 
     def get_queryset(self):
-        queryset = Grade.objects.select_related('student', 'lesson', 'lesson__subject', 'grade_type')
+        user = self.request.user
+        queryset = Grade.objects.select_related('student', 'lesson', 'lesson__subject')
+        
+        if not user.is_superuser:
+            queryset = queryset.filter(lesson__subject__teacher=user)
+            
         subject_id = self.request.GET.get('subject')
         if subject_id:
             queryset = queryset.filter(lesson__subject_id=subject_id)
+            
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['subjects'] = Subject.objects.all()
+        user = self.request.user
+        if user.is_superuser:
+            context['subjects'] = Subject.objects.all()
+        else:
+            context['subjects'] = Subject.objects.filter(teacher=user)
         context['selected_subject'] = self.request.GET.get('subject', '')
         return context
 
-
-
-class GradeCreateView(StaffOrModeratorRequiredMixin, CreateView):
-    """Створення нової оцінки."""
+# Створення оцінки (потрібен для urls.py)
+class GradeCreateView(LoginRequiredMixin, CreateView):
     model = Grade
-    fields = ['student', 'lesson', 'grade_type', 'value', 'comment']
+    form_class = GradeForm
     template_name = 'journal/grade_form.html'
     success_url = reverse_lazy('journal:all_grades')
 
-
-from django.views.generic import UpdateView, DeleteView
-
-
-class GradeUpdateView(StaffOrModeratorRequiredMixin, UpdateView):
-    """Редагування оцінки."""
+# Редагування оцінки
+class GradeUpdateView(LoginRequiredMixin, UpdateView):
     model = Grade
-    fields = ['student', 'lesson', 'grade_type', 'value', 'comment']
-    template_name = 'journal/grade_form.html' 
+    form_class = GradeForm
+    template_name = 'journal/grade_form.html'
     success_url = reverse_lazy('journal:all_grades')
 
-
-class GradeDeleteView(StaffOrModeratorRequiredMixin, DeleteView):
-    """Видалення оцінки."""
+# Видалення оцінки
+class GradeDeleteView(LoginRequiredMixin, DeleteView):
     model = Grade
     template_name = 'journal/grade_confirm_delete.html'
     success_url = reverse_lazy('journal:all_grades')
+
