@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Список тем</h1>
+    <div class="list-group">
+        {% for topic in topics %}
+            <a href="{% url 'topic_chat' topic.id %}" class="list-group-item list-group-item-action">
+                <h5 class="mb-1">{{ topic.title }}</h5>
+                <small>Створено: {{ topic.created_at|date:"d.m.Y H:i" }}</small>
+            </a>
+        {% empty %}
+            <p>Немає доступних тем.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
