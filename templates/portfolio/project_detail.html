@@ -1,9 +1,32 @@
-
 {% extends 'base.html' %}
 
 {% block title %}{{ project.title }}{% endblock %}
 
 {% block content %}
+
+<!-- Lightbox2 (lokeshdhakar.com/projects/lightbox2) -->
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css"
+>
+
+<!-- Rounded corners for the lightbox overlay -->
+<style>
+    .lb-outerContainer {
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .lb-image {
+        border-radius: 14px !important;
+    }
+
+    .lb-dataContainer {
+        border-bottom-left-radius: 14px;
+        border-bottom-right-radius: 14px;
+        overflow: hidden;
+    }
+</style>
 
 <div style="
     background: #f8fafc;
@@ -198,16 +221,23 @@
                                         background: #f8fafc;
                                     ">
 
-                                        <img
-                                            src="{{ image.image.url }}"
-                                            alt="{{ project.title }}"
-                                            style="
-                                                width: 100%;
-                                                height: 220px;
-                                                object-fit: cover;
-                                                display: block;
-                                            "
+                                        <a
+                                            href="{{ image.image.url }}"
+                                            data-lightbox="project-{{ project.pk }}-gallery"
+                                            data-title="{{ project.title }}"
+                                            style="cursor: zoom-in;"
                                         >
+                                            <img
+                                                src="{{ image.image.url }}"
+                                                alt="{{ project.title }}"
+                                                style="
+                                                    width: 100%;
+                                                    height: 220px;
+                                                    object-fit: cover;
+                                                    display: block;
+                                                "
+                                            >
+                                        </a>
 
                                         <div style="
                                             padding: 10px;
@@ -660,5 +690,19 @@
 
 </div>
 
-{% endblock %}
+<!-- Lightbox2 requires jQuery. Remove this <script> tag if base.html
+     already loads jQuery elsewhere, to avoid loading it twice. -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/js/lightbox.min.js"></script>
 
+<script>
+    lightbox.option({
+        resizeDuration: 200,
+        wrapAround: true,
+        albumLabel: "Изображение %1 из %2",
+        fadeDuration: 250,
+        imageFadeDuration: 250
+    });
+</script>
+
+{% endblock %}
