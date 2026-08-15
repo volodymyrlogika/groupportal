@@ -1,36 +1,48 @@
 from django.urls import path
+
 from .views import (
-    ListView,
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
+    CalendarView,
+    EventDetailView,
+    EventCreateView,
+    EventUpdateView,
+    EventDeleteView,
 )
 
-urlpatterns = [
-    path('', ListView.as_view(), name='calendar'),
 
+urlpatterns = [
+
+    # Календар
+    path(
+        '',
+        CalendarView.as_view(),
+        name='calendar'
+    ),
+
+    # Перегляд події
     path(
         'event/<int:pk>/',
-        DetailView.as_view(),
+        EventDetailView.as_view(),
         name='event_detail'
     ),
 
+    # Створення
     path(
         'event/create/',
-        CreateView.as_view(),
+        EventCreateView.as_view(),
         name='event_create'
     ),
 
+    # Редагування
     path(
         'event/<int:pk>/edit/',
-        UpdateView.as_view(),
+        EventUpdateView.as_view(),
         name='event_update'
     ),
 
+    # Видалення
     path(
         'event/<int:pk>/delete/',
-        DeleteView.as_view(),
+        EventDeleteView.as_view(),
         name='event_delete'
     ),
 ]
