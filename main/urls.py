@@ -15,6 +15,11 @@ urlpatterns = [
         views.portfolio_edit,
         name="portfolio_edit",
     ),
+    path(
+        "public/portfolio/<int:user_id>/",
+        views.author_portfolio,
+        name="author_portfolio",
+    ),
 
     # Projects
     path(
@@ -48,5 +53,29 @@ urlpatterns = [
         "portfolio/images/<int:pk>/delete/",
         views.project_image_delete,
         name="project_image_delete",
+    ),
+
+    # Public projects feed
+    path(
+        "public/projects/",
+        views.public_project_list,
+        name="public_project_list",
+    ),
+    path(
+        "public/projects/<int:pk>/",
+        views.public_project_detail,
+        name="public_project_detail",
+    ),
+    path(
+        "public/projects/<int:pk>/like/",
+        views.project_vote,
+        {"value": 1},
+        name="project_like",
+    ),
+    path(
+        "public/projects/<int:pk>/dislike/",
+        views.project_vote,
+        {"value": -1},
+        name="project_dislike",
     ),
 ]

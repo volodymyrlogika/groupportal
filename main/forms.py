@@ -63,6 +63,7 @@ class PortfolioProjectForm(forms.ModelForm):
             "project_url",
             "github_url",
             "technologies",
+            "visibility",
         ]
 
         widgets = {
@@ -100,6 +101,11 @@ class PortfolioProjectForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "placeholder": "Python, Django, HTML, CSS",
+                }
+            ),
+            "visibility": forms.RadioSelect(
+                attrs={
+                    "class": "form-check-input",
                 }
             ),
         }
