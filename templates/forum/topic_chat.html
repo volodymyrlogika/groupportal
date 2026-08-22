@@ -3,6 +3,11 @@
 {% block title %}{{ topic.title }} - GroupPortal{% endblock %}
 
 {% block content %}
+
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/forum.css' %}">
+
+
 <div style="margin-bottom: 24px;">
     <a href="{% url 'topic_list' %}" class="text-primary" style="text-decoration: none;">
         <i class="fas fa-arrow-left"></i> Назад до списку тем

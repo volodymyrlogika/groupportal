@@ -3,6 +3,10 @@
 {% block title %}Форум - GroupPortal{% endblock %}
 
 {% block content %}
+
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/forum.css' %}">
+    
 <div class="mb-4">
     <h1>💬 Список тем форуму</h1>
     <p class="text-muted" style="font-size: 1.1rem;">Обговорюйте актуальні теми та спілкуйтесь з членами спільноти</p>

@@ -3,6 +3,10 @@
 {% block title %}Редагувати пост - GroupPortal{% endblock %}
 
 {% block content %}
+
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/forum.css' %}">
+    
 <div style="max-width: 760px; margin: 0 auto;">
     <div style="margin-bottom: 24px;">
         <a href="{% url 'topic_chat' post.topic.id %}" class="text-primary" style="text-decoration: none;">
