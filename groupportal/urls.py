@@ -22,6 +22,7 @@ from . import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('voting/', include('voting.urls')),
     path('', include('poll.urls')),
     path('', include('forum.urls')),
     path('', include('accounts.urls')),
