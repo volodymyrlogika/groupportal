@@ -30,13 +30,21 @@ from .models import (
 def portfolio_detail(request):
     """
     Display the current user's private portfolio.
+
+    If the user doesn't have a Portfolio yet (e.g. a brand new
+    user who has never visited the edit page), one is created
+    automatically instead of returning a 404.
     """
-    portfolio = get_object_or_404(
+    portfolio, created = Portfolio.objects.get_or_create(
+        user=request.user
+    )
+
+    portfolio = (
         Portfolio.objects.prefetch_related(
             "projects",
             "projects__images",
-        ),
-        user=request.user,
+        )
+        .get(pk=portfolio.pk)
     )
 
     projects = portfolio.projects.all()
