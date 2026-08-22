@@ -1,11 +1,11 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+
 from .models import Grade, Subject
 from .forms import GradeForm
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied
 
 class ModeratorMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -16,9 +16,6 @@ class ModeratorMixin(LoginRequiredMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-
-
-
 # Перегляд оцінок для учня
 class StudentJournalView(LoginRequiredMixin, ListView):
     model = Grade
@@ -27,6 +24,7 @@ class StudentJournalView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Grade.objects.filter(student=self.request.user)
+
 
 # Перегляд усіх оцінок для вчителя/адміна
 class AllGradesListView(ModeratorMixin, ListView):
@@ -57,12 +55,19 @@ class AllGradesListView(ModeratorMixin, ListView):
         context['selected_subject'] = self.request.GET.get('subject', '')
         return context
 
-# Створення оцінки (потрібен для urls.py)
+
+# Створення оцінки
 class GradeCreateView(ModeratorMixin, CreateView):
     model = Grade
     form_class = GradeForm
     template_name = 'journal/grade_form.html'
     success_url = reverse_lazy('journal:all_grades')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Передаємо користувача у форму
+        return kwargs
+
 
 # Редагування оцінки
 class GradeUpdateView(ModeratorMixin, UpdateView):
@@ -71,9 +76,14 @@ class GradeUpdateView(ModeratorMixin, UpdateView):
     template_name = 'journal/grade_form.html'
     success_url = reverse_lazy('journal:all_grades')
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  # Передаємо користувача у форму
+        return kwargs
+
+
 # Видалення оцінки
-class GradeDeleteView(LoginRequiredMixin, DeleteView):
+class GradeDeleteView(ModeratorMixin, DeleteView):
     model = Grade
     template_name = 'journal/grade_confirm_delete.html'
     success_url = reverse_lazy('journal:all_grades')
-
