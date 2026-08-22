@@ -2,14 +2,24 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, View
 from poll.models import Choice, Poll, PollView, PollAttempt
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+
+class ModeratorMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
+        if not request.user.groups.filter(name__in=['Модератори']).exists() and not request.user.is_superuser:
+            raise PermissionDenied("Ви не маєте доступу до цієї сторінки.")
+        return super().dispatch(request, *args, **kwargs)
 
 # Create your views here.
-class PollListView(ListView):
+class PollListView(LoginRequiredMixin, ListView):
     model = Poll
     template_name = "poll/poll_list.html"
     context_object_name = "polls"
 
-class PollDetailView(DetailView):
+class PollDetailView(LoginRequiredMixin, DetailView):
     model = Poll
     template_name = "poll/poll_detail.html"
     context_object_name = "poll"
@@ -26,7 +36,7 @@ class PollDetailView(DetailView):
         return poll
 
 
-class PollStartView(View):
+class PollStartView(LoginRequiredMixin, View):
 
     def get(self, request, pk):
         poll = get_object_or_404(
@@ -93,7 +103,7 @@ class PollStartView(View):
             pk=poll.pk
         )
 
-class PollResultView(View): 
+class PollResultView(LoginRequiredMixin, View): 
     def get(self, request, pk): 
         poll = get_object_or_404( Poll, pk=pk )
         answers = request.session.get( "poll_answers", {} )
@@ -128,7 +138,9 @@ class PollResultView(View):
         }
         return render( request, "poll/poll_result.html", context )
 
-class PollQuestionView(View):
+class PollQuestionView(ModeratorMixin, LoginRequiredMixin, View):
+
+    login_url = "login"
 
     def get(self, request):
         return render(
