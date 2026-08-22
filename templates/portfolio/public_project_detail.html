@@ -1,0 +1,642 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+
+<!-- Lightbox2 (lokeshdhakar.com/projects/lightbox2) -->
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css"
+>
+
+<!-- Rounded corners for the lightbox overlay -->
+<style>
+    .lb-outerContainer {
+        border-radius: 14px;
+        overflow: hidden;
+    }
+
+    .lb-image {
+        border-radius: 14px !important;
+    }
+
+    .lb-dataContainer {
+        border-bottom-left-radius: 14px;
+        border-bottom-right-radius: 14px;
+        overflow: hidden;
+    }
+</style>
+
+<div style="
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 40px 0 60px;
+    color: #172033;
+">
+
+    <div class="container">
+
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
+        <div class="mb-4">
+
+            <a
+                href="{% url 'public_project_list' %}"
+                style="
+                    color: #64748b;
+                    text-decoration: none;
+                    font-size: 0.95rem;
+                "
+            >
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Public Projects
+            </a>
+
+        </div>
+
+
+        <!-- =====================================================
+             PROJECT HEADER
+             ===================================================== -->
+
+        <div style="
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+            padding: 32px;
+            margin-bottom: 28px;
+        ">
+
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-4">
+
+                <div>
+
+                    <!-- Author -->
+
+                    <a
+                        href="{% url 'author_portfolio' project.portfolio.user.pk %}"
+                        class="d-flex align-items-center gap-2"
+                        style="
+                            text-decoration: none;
+                            margin-bottom: 14px;
+                        "
+                    >
+
+                        {% if project.portfolio.avatar %}
+
+                            <img
+                                src="{{ project.portfolio.avatar.url }}"
+                                alt="{{ project.portfolio.user.username }}"
+                                style="
+                                    width: 32px;
+                                    height: 32px;
+                                    object-fit: cover;
+                                    border-radius: 50%;
+                                "
+                            >
+
+                        {% else %}
+
+                            <div style="
+                                width: 32px;
+                                height: 32px;
+                                border-radius: 50%;
+                                background: #dbeafe;
+                                color: #2563eb;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 0.85rem;
+                                font-weight: 700;
+                            ">
+                                {{ project.portfolio.user.username|first|upper }}
+                            </div>
+
+                        {% endif %}
+
+                        <span style="
+                            color: #475569;
+                            font-size: 0.9rem;
+                            font-weight: 600;
+                        ">
+                            {{ project.portfolio.user.username }}
+                        </span>
+
+                    </a>
+
+
+                    <h1 style="
+                        font-size: 2.2rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin: 0 0 12px;
+                    ">
+                        {{ project.title }}
+                    </h1>
+
+
+                    {% if project.technologies %}
+
+                        <div style="
+                            color: #2563eb;
+                            background: #eff6ff;
+                            display: inline-block;
+                            border-radius: 6px;
+                            padding: 4px 10px;
+                            font-size: 0.8rem;
+                            font-weight: 500;
+                        ">
+                            {{ project.technologies }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Vote / owner actions -->
+
+                <div class="d-flex flex-column align-items-end gap-2">
+
+                    {% if is_owner %}
+
+                        <a
+                            href="{% url 'project_detail' project.pk %}"
+                            class="btn"
+                            style="
+                                background: #ffffff;
+                                border: 1px solid #e2e8f0;
+                                color: #475569;
+                                border-radius: 7px;
+                                padding: 9px 16px;
+                                font-weight: 500;
+                            "
+                        >
+                            <i class="bi bi-pencil me-1"></i>
+                            Manage Project
+                        </a>
+
+                    {% else %}
+
+                        <div class="d-flex gap-2">
+
+                            <form
+                                method="post"
+                                action="{% url 'project_like' project.pk %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="next"
+                                    value="{% url 'public_project_detail' project.pk %}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="btn d-flex align-items-center gap-2"
+                                    style="
+                                        background: {% if user_vote == 1 %}#dcfce7{% else %}#ffffff{% endif %};
+                                        border: 1px solid {% if user_vote == 1 %}#16a34a{% else %}#e2e8f0{% endif %};
+                                        color: #16a34a;
+                                        border-radius: 7px;
+                                        padding: 9px 16px;
+                                        font-weight: 600;
+                                    "
+                                >
+                                    <i class="bi bi-hand-thumbs-up{% if user_vote == 1 %}-fill{% endif %}"></i>
+                                    {{ project.likes_count }}
+                                </button>
+
+                            </form>
+
+
+                            <form
+                                method="post"
+                                action="{% url 'project_dislike' project.pk %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <input
+                                    type="hidden"
+                                    name="next"
+                                    value="{% url 'public_project_detail' project.pk %}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="btn d-flex align-items-center gap-2"
+                                    style="
+                                        background: {% if user_vote == -1 %}#fee2e2{% else %}#ffffff{% endif %};
+                                        border: 1px solid {% if user_vote == -1 %}#dc2626{% else %}#e2e8f0{% endif %};
+                                        color: #dc2626;
+                                        border-radius: 7px;
+                                        padding: 9px 16px;
+                                        font-weight: 600;
+                                    "
+                                >
+                                    <i class="bi bi-hand-thumbs-down{% if user_vote == -1 %}-fill{% endif %}"></i>
+                                    {{ project.dislikes_count }}
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             MAIN CONTENT
+             ===================================================== -->
+
+        <div class="row g-4">
+
+            <!-- =================================================
+                 LEFT COLUMN
+                 ================================================= -->
+
+            <div class="col-12 col-lg-8">
+
+
+                <!-- Project images -->
+
+                {% if project.images.all %}
+
+                    <div style="
+                        background: #ffffff;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                        padding: 24px;
+                        margin-bottom: 24px;
+                    ">
+
+                        <h2 style="
+                            font-size: 1.2rem;
+                            font-weight: 700;
+                            color: #172033;
+                            margin-bottom: 15px;
+                        ">
+                            Project Images
+                        </h2>
+
+                        <div class="row g-3">
+
+                            {% for image in project.images.all %}
+
+                                <div class="col-12 col-md-6">
+
+                                    <div style="
+                                        border: 1px solid #e2e8f0;
+                                        border-radius: 10px;
+                                        overflow: hidden;
+                                        background: #f8fafc;
+                                    ">
+
+                                        <a
+                                            href="{{ image.image.url }}"
+                                            data-lightbox="project-{{ project.pk }}-gallery"
+                                            data-title="{{ project.title }}"
+                                            style="cursor: zoom-in;"
+                                        >
+                                            <img
+                                                src="{{ image.image.url }}"
+                                                alt="{{ project.title }}"
+                                                style="
+                                                    width: 100%;
+                                                    height: 220px;
+                                                    object-fit: cover;
+                                                    display: block;
+                                                "
+                                            >
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Description -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 15px;
+                    ">
+                        Description
+                    </h2>
+
+                    {% if project.description %}
+
+                        <div style="
+                            color: #475569;
+                            line-height: 1.8;
+                        ">
+                            {{ project.description|linebreaksbr }}
+                        </div>
+
+                    {% else %}
+
+                        <p style="
+                            color: #64748b;
+                            font-size: 0.9rem;
+                            margin: 0;
+                        ">
+                            No description provided.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT COLUMN
+                 ================================================= -->
+
+            <div class="col-12 col-lg-4">
+
+
+                <!-- Rating summary -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 24px;
+                    margin-bottom: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 15px;
+                    ">
+                        Rating
+                    </h2>
+
+                    <div class="d-flex align-items-center justify-content-between">
+
+                        <div
+                            class="d-flex align-items-center gap-2"
+                            style="color: #16a34a;"
+                        >
+                            <i
+                                class="bi bi-hand-thumbs-up-fill"
+                                style="font-size: 1.3rem;"
+                            ></i>
+                            <span style="font-weight: 700; font-size: 1.1rem;">
+                                {{ project.likes_count }}
+                            </span>
+                        </div>
+
+                        <div
+                            class="d-flex align-items-center gap-2"
+                            style="color: #dc2626;"
+                        >
+                            <i
+                                class="bi bi-hand-thumbs-down-fill"
+                                style="font-size: 1.3rem;"
+                            ></i>
+                            <span style="font-weight: 700; font-size: 1.1rem;">
+                                {{ project.dislikes_count }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    {% if is_owner %}
+
+                        <div style="
+                            color: #94a3b8;
+                            font-size: 0.8rem;
+                            margin-top: 12px;
+                            text-align: center;
+                        ">
+                            Authors can't vote on their own project.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Links -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 24px;
+                    margin-bottom: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 15px;
+                    ">
+                        Project Links
+                    </h2>
+
+
+                    {% if project.project_url %}
+
+                        <a
+                            href="{{ project.project_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="d-flex align-items-center gap-2"
+                            style="
+                                color: #2563eb;
+                                text-decoration: none;
+                                font-weight: 500;
+                                margin-bottom: 12px;
+                            "
+                        >
+                            <i class="bi bi-globe2"></i>
+                            Live Project
+                            <i class="bi bi-box-arrow-up-right ms-auto"></i>
+                        </a>
+
+                    {% endif %}
+
+
+                    {% if project.github_url %}
+
+                        <a
+                            href="{{ project.github_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="d-flex align-items-center gap-2"
+                            style="
+                                color: #2563eb;
+                                text-decoration: none;
+                                font-weight: 500;
+                                margin-bottom: 12px;
+                            "
+                        >
+                            <i class="bi bi-github"></i>
+                            GitHub Repository
+                            <i class="bi bi-box-arrow-up-right ms-auto"></i>
+                        </a>
+
+                    {% endif %}
+
+
+                    {% if not project.project_url and not project.github_url %}
+
+                        <p style="
+                            color: #64748b;
+                            font-size: 0.9rem;
+                            margin: 0;
+                        ">
+                            No project links provided.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Author card -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 15px;
+                    ">
+                        Author
+                    </h2>
+
+                    <a
+                        href="{% url 'author_portfolio' project.portfolio.user.pk %}"
+                        class="d-flex align-items-center gap-3"
+                        style="text-decoration: none;"
+                    >
+
+                        {% if project.portfolio.avatar %}
+
+                            <img
+                                src="{{ project.portfolio.avatar.url }}"
+                                alt="{{ project.portfolio.user.username }}"
+                                style="
+                                    width: 44px;
+                                    height: 44px;
+                                    object-fit: cover;
+                                    border-radius: 50%;
+                                "
+                            >
+
+                        {% else %}
+
+                            <div style="
+                                width: 44px;
+                                height: 44px;
+                                border-radius: 50%;
+                                background: #dbeafe;
+                                color: #2563eb;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 1rem;
+                                font-weight: 700;
+                            ">
+                                {{ project.portfolio.user.username|first|upper }}
+                            </div>
+
+                        {% endif %}
+
+                        <div>
+
+                            <div style="
+                                color: #172033;
+                                font-weight: 600;
+                                font-size: 0.95rem;
+                            ">
+                                {{ project.portfolio.user.username }}
+                            </div>
+
+                            <div style="
+                                color: #2563eb;
+                                font-size: 0.82rem;
+                            ">
+                                View portfolio
+                                <i class="bi bi-arrow-right ms-1"></i>
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Lightbox2 requires jQuery. Remove this <script> tag if base.html
+     already loads jQuery elsewhere, to avoid loading it twice. -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/js/lightbox.min.js"></script>
+
+<script>
+    lightbox.option({
+        resizeDuration: 200,
+        wrapAround: true,
+        albumLabel: "Изображение %1 из %2",
+        fadeDuration: 250,
+        imageFadeDuration: 250
+    });
+</script>
+
+{% endblock %}
