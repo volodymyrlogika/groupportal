@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+
+{% block title %}Public Projects{% endblock %}
+
+{% block content %}
+
+<div style="
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 40px 0 60px;
+    color: #172033;
+">
+
+    <div class="container">
+
+        <!-- Page header -->
+
+        <div class="mb-4">
+
+            <h1 style="
+                font-size: 2rem;
+                font-weight: 700;
+                color: #172033;
+                margin: 0 0 6px;
+            ">
+                Public Projects
+            </h1>
+
+            <p style="
+                color: #64748b;
+                margin: 0;
+            ">
+                Explore projects shared by the community, ranked by popularity.
+            </p>
+
+        </div>
+
+
+        <!-- Projects grid -->
+
+        {% if projects %}
+
+            <div class="row g-4">
+
+                {% for project in projects %}
+
+                    <div class="col-12 col-md-6 col-lg-4">
+
+                        <div style="
+                            background: #ffffff;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 12px;
+                            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                            overflow: hidden;
+                            height: 100%;
+                            display: flex;
+                            flex-direction: column;
+                        ">
+
+                            <!-- Cover image -->
+
+                            <a
+                                href="{% url 'public_project_detail' project.pk %}"
+                                style="text-decoration: none;"
+                            >
+
+                                {% with project.images.first as cover %}
+
+                                    {% if cover %}
+
+                                        <img
+                                            src="{{ cover.image.url }}"
+                                            alt="{{ project.title }}"
+                                            style="
+                                                width: 100%;
+                                                height: 180px;
+                                                object-fit: cover;
+                                                display: block;
+                                            "
+                                        >
+
+                                    {% else %}
+
+                                        <div style="
+                                            width: 100%;
+                                            height: 180px;
+                                            background: #f8fafc;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            color: #cbd5e1;
+                                            font-size: 2rem;
+                                        ">
+                                            <i class="bi bi-image"></i>
+                                        </div>
+
+                                    {% endif %}
+
+                                {% endwith %}
+
+                            </a>
+
+
+                            <!-- Card body -->
+
+                            <div style="
+                                padding: 18px 20px 20px;
+                                display: flex;
+                                flex-direction: column;
+                                flex: 1;
+                            ">
+
+                                <!-- Author -->
+
+                                <a
+                                    href="{% url 'author_portfolio' project.portfolio.user.pk %}"
+                                    class="d-flex align-items-center gap-2"
+                                    style="
+                                        text-decoration: none;
+                                        margin-bottom: 10px;
+                                    "
+                                >
+
+                                    {% if project.portfolio.avatar %}
+
+                                        <img
+                                            src="{{ project.portfolio.avatar.url }}"
+                                            alt="{{ project.portfolio.user.username }}"
+                                            style="
+                                                width: 24px;
+                                                height: 24px;
+                                                object-fit: cover;
+                                                border-radius: 50%;
+                                            "
+                                        >
+
+                                    {% else %}
+
+                                        <div style="
+                                            width: 24px;
+                                            height: 24px;
+                                            border-radius: 50%;
+                                            background: #dbeafe;
+                                            color: #2563eb;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-size: 0.7rem;
+                                            font-weight: 700;
+                                        ">
+                                            {{ project.portfolio.user.username|first|upper }}
+                                        </div>
+
+                                    {% endif %}
+
+                                    <span style="
+                                        color: #64748b;
+                                        font-size: 0.85rem;
+                                        font-weight: 500;
+                                    ">
+                                        {{ project.portfolio.user.username }}
+                                    </span>
+
+                                </a>
+
+
+                                <!-- Title -->
+
+                                <a
+                                    href="{% url 'public_project_detail' project.pk %}"
+                                    style="text-decoration: none;"
+                                >
+
+                                    <h2 style="
+                                        font-size: 1.1rem;
+                                        font-weight: 700;
+                                        color: #172033;
+                                        margin: 0 0 8px;
+                                    ">
+                                        {{ project.title }}
+                                    </h2>
+
+                                </a>
+
+
+                                <!-- Description -->
+
+                                <p style="
+                                    color: #64748b;
+                                    font-size: 0.88rem;
+                                    line-height: 1.55;
+                                    margin: 0 0 16px;
+                                    flex: 1;
+                                    display: -webkit-box;
+                                    -webkit-line-clamp: 3;
+                                    -webkit-box-orient: vertical;
+                                    overflow: hidden;
+                                ">
+                                    {{ project.description }}
+                                </p>
+
+
+                                <!-- Technologies -->
+
+                                {% if project.technologies %}
+
+                                    <div style="
+                                        margin-bottom: 16px;
+                                    ">
+
+                                        <span style="
+                                            color: #2563eb;
+                                            background: #eff6ff;
+                                            border-radius: 6px;
+                                            padding: 3px 9px;
+                                            font-size: 0.75rem;
+                                            font-weight: 500;
+                                        ">
+                                            {{ project.technologies }}
+                                        </span>
+
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- Footer: rating -->
+
+                                <div
+                                    class="d-flex align-items-center justify-content-between"
+                                    style="
+                                        border-top: 1px solid #f1f5f9;
+                                        padding-top: 14px;
+                                        margin-top: auto;
+                                    "
+                                >
+
+                                    <div class="d-flex align-items-center gap-3">
+
+                                        <span
+                                            class="d-flex align-items-center gap-1"
+                                            style="
+                                                color: #16a34a;
+                                                font-size: 0.85rem;
+                                                font-weight: 600;
+                                            "
+                                        >
+                                            <i class="bi bi-hand-thumbs-up-fill"></i>
+                                            {{ project.likes_count }}
+                                        </span>
+
+                                        <span
+                                            class="d-flex align-items-center gap-1"
+                                            style="
+                                                color: #dc2626;
+                                                font-size: 0.85rem;
+                                                font-weight: 600;
+                                            "
+                                        >
+                                            <i class="bi bi-hand-thumbs-down-fill"></i>
+                                            {{ project.dislikes_count }}
+                                        </span>
+
+                                    </div>
+
+                                    <a
+                                        href="{% url 'public_project_detail' project.pk %}"
+                                        style="
+                                            color: #2563eb;
+                                            text-decoration: none;
+                                            font-size: 0.85rem;
+                                            font-weight: 600;
+                                        "
+                                    >
+                                        View
+                                        <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <!-- Empty state -->
+
+            <div style="
+                background: #ffffff;
+                border: 1px dashed #cbd5e1;
+                border-radius: 12px;
+                padding: 60px 20px;
+                text-align: center;
+            ">
+
+                <div style="
+                    width: 64px;
+                    height: 64px;
+                    margin: 0 auto 16px;
+                    border-radius: 50%;
+                    background: #dbeafe;
+                    color: #2563eb;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 28px;
+                ">
+                    <i class="bi bi-globe2"></i>
+                </div>
+
+                <h2 style="
+                    font-size: 1.2rem;
+                    font-weight: 700;
+                    color: #172033;
+                    margin-bottom: 8px;
+                ">
+                    No public projects yet
+                </h2>
+
+                <p style="
+                    color: #64748b;
+                    font-size: 0.9rem;
+                    margin: 0;
+                ">
+                    Be the first to share a project with the community.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
