@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ topic.title }} - GroupPortal{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 24px;">
+    <a href="{% url 'topic_list' %}" class="text-primary" style="text-decoration: none;">
+        <i class="fas fa-arrow-left"></i> Назад до списку тем
+    </a>
+    <h1 style="margin-top: 12px;">{{ topic.title }}</h1>
+    <p class="text-muted">
+        <i class="fas fa-calendar-alt"></i> 
+        Створено: {{ topic.created_at|date:"d.m.Y H:i" }}
+    </p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 320px; gap: 24px; margin-bottom: 24px;">
+    <!-- Основний контент -->
+    <div>
+        <!-- Коментарі / Пости -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 style="margin: 0;">
+                    <i class="fas fa-comments"></i> 
+                    Обговорення ({% if posts %}{{ posts.count }}{% else %}0{% endif %} постів)
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if posts %}
+                    {% for post in posts %}
+                        <div class="message-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div class="avatar">
+                                        {{ post.author.username|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="message-author">{{ post.author.username }}</div>
+                                        <div class="message-time">
+                                            <i class="fas fa-clock"></i> 
+                                            {{ post.created_at|date:"d.m.Y H:i" }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="badge badge-primary">
+                                    <i class="fas fa-heart"></i> {{ post.likes.count }}
+                                </span>
+                            </div>
+                            <div class="message-content">
+                                {{ post.content }}
+                            </div>
+                            {% if post.image %}
+                                <div style="margin-top: 12px;">
+                                    <img src="{{ post.image.url }}" alt="Фото поста" style="max-width: 100%; border-radius: 8px; max-height: 400px;">
+                                </div>
+                            {% endif %}
+                            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-200);">
+                                <form method="post" action="{% url 'toggle_like' post.id %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm" style="background: var(--gray-100); color: var(--gray-700); border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                                        <i class="fas fa-heart"></i>
+                                        {% if user in post.likes.all %}Прибрати вподобання{% else %}Вподобати{% endif %}
+                                    </button>
+                                </form>
+                                <a href="{% url 'topic_chat' topic.id %}?reply_to={{ post.id }}#post-form" class="btn btn-sm reply-button" style="background: var(--gray-100); color: var(--gray-700); border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; margin-left: 8px;">
+                                    <i class="fas fa-reply"></i> Відповісти
+                                </a>
+                                {% if post.author == user %}
+                                    <a href="{% url 'edit_post' post.id %}" class="btn btn-sm" style="background: var(--gray-100); color: var(--gray-700); border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; margin-left: 8px;">
+                                        <i class="fas fa-edit"></i> Редагувати
+                                    </a>
+                                    <form method="post" action="{% url 'delete_post' post.id %}" style="display: inline; margin-left: 8px;" onsubmit="return confirm('Видалити цей пост?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm" style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s;">
+                                            <i class="fas fa-trash"></i> Видалити
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <i class="fas fa-inbox" style="font-size: 2rem; color: var(--gray-300); margin-bottom: 16px; display: block;"></i>
+                        <p class="text-muted">Немає постів. Будьте першим, хто напишет!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Форма для новго поста -->
+        <div class="card">
+            <div class="card-header">
+                <h5 style="margin: 0;">
+                    <i class="fas fa-pen-fancy"></i> Напишіть свій пост
+                </h5>
+            </div>
+            <div class="card-body">
+                <form id="post-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="content" class="form-label">Текст</label>
+                        <textarea id="content" name="content" class="form-control" rows="5" placeholder="Поділіться своєю думкою...">{{ reply_text }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="image" class="form-label">
+                            <i class="fas fa-image"></i> Додати фото (опціонально)
+                        </label>
+                        <input id="image" type="file" name="image" class="form-control" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Опублікувати
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div>
+        <!-- Інформація про тему -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 style="margin: 0;">Інформація</h6>
+            </div>
+            <div class="card-body">
+                <div style="margin-bottom: 16px;">
+                    <small class="text-muted">ПОСТІВ</small>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">
+                        {% if posts %}{{ posts.count }}{% else %}0{% endif %}
+                    </div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <small class="text-muted">ПЕРЕГЛЯДІВ</small>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary);">
+                        {{ topic.views|default:0 }}
+                    </div>
+                </div>
+                <div>
+                    <small class="text-muted">ДАТА СТВОРЕННЯ</small>
+                    <div style="font-size: 0.9rem; margin-top: 4px;">
+                        {{ topic.created_at|date:"d.m.Y" }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Теги -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 style="margin: 0;">Теги</h6>
+            </div>
+            <div class="card-body">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <span class="badge badge-primary">Дискусія</span>
+                    <span class="badge badge-secondary">Форум</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Правила -->
+        <div class="card">
+            <div class="card-header">
+                <h6 style="margin: 0;">Правила спілкування</h6>
+            </div>
+            <div class="card-body" style="font-size: 0.9rem;">
+                <ul style="margin: 0; padding-left: 20px; color: var(--gray-600);">
+                    <li>Будьте ввічливі до інших</li>
+                    <li>Не спам та реклама</li>
+                    <li>Дотримуйтесь правопису</li>
+                    <li>Поважайте думку інших</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media (max-width: 768px) {
+        div[style*="display: grid"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+
+<script>
+    document.querySelectorAll('button').forEach(btn => {
+        if (btn.textContent.includes('Вподобати')) {
+            btn.addEventListener('click', function() {
+                this.style.background = 'var(--danger)';
+                this.style.color = 'white';
+                this.style.transform = 'scale(1.05)';
+            });
+        }
+    });
+</script>
+{% endblock %}

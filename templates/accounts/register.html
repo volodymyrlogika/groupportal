@@ -1,11 +1,117 @@
 {% extends 'base.html' %}
 
+{% block title %}Реєстрація - GroupPortal{% endblock %}
+
 {% block content %}
-<h2>Реєстрація</h2>
-<form method="post">
-    {% csrf_token %}
-    {{form.as_div}}
-    <button type="submit" class="btn btn-primary">Зареєструватися</button>
-    <a href="{% url 'login' %}" class="btn btn-link">Увійти</a>
-</form>
+<div style="display: grid; grid-template-columns: 1fr 450px; gap: 48px; align-items: start; margin: 40px 0;">
+    <!-- Ліва частина - Переваги -->
+    <div>
+        <h1 style="margin-bottom: 16px;">Приєднайтесь до нашої спільноти!</h1>
+        <p style="font-size: 1.1rem; color: var(--gray-600); line-height: 1.6; margin-bottom: 32px;">
+            GroupPortal - це простий і безпечний спосіб спілкуватися з однодумцями, обговорювати цікаві теми та будувати нові дружби.
+        </p>
+        
+        <div style="margin-bottom: 24px;">
+            <div style="display: flex; align-items: start; gap: 16px; margin-bottom: 20px;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-check" style="color: white;"></i>
+                </div>
+                <div>
+                    <h5 style="margin: 0; margin-bottom: 4px;">100% безплатно</h5>
+                    <p style="margin: 0; font-size: 0.95rem; color: var(--gray-600);">Всі функції доступні без будь-яких платежів або прихованих комісій.</p>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: start; gap: 16px; margin-bottom: 20px;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-bolt" style="color: white;"></i>
+                </div>
+                <div>
+                    <h5 style="margin: 0; margin-bottom: 4px;">Швидка реєстрація</h5>
+                    <p style="margin: 0; font-size: 0.95rem; color: var(--gray-600);">Займе всього кілька хвилин. Просто заповніть форму і почніть спілкуватися.</p>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: start; gap: 16px;">
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--success) 0%, #10b981 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <i class="fas fa-shield-alt" style="color: white;"></i>
+                </div>
+                <div>
+                    <h5 style="margin: 0; margin-bottom: 4px;">Ваша приватність</h5>
+                    <p style="margin: 0; font-size: 0.95rem; color: var(--gray-600);">Ми ніколи не ділимося вашими даними з третіми сторонами.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Права частина - Форма реєстрації -->
+    <div class="card">
+        <div class="card-body" style="padding: 40px;">
+            <h2 style="text-align: center; margin-bottom: 8px; color: var(--primary);">Реєстрація</h2>
+            <p style="text-align: center; color: var(--gray-500); margin-bottom: 32px;">Создайте свій профіль прямо зараз</p>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} mb-3">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" novalidate>
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="form-group mb-3">
+                        <label for="{{ field.id_for_label }}" class="form-label">
+                            {% if field.label %}{{ field.label }}{% endif %}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div style="color: var(--danger); font-size: 0.85rem; margin-top: 6px;">
+                                {% for error in field.errors %}
+                                    <p style="margin: 2px 0;">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% if field.help_text %}
+                            <small style="color: var(--gray-500); display: block; margin-top: 4px;">{{ field.help_text|safe }}</small>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary w-100 mb-3">
+                    <i class="fas fa-user-plus"></i> Зареєструватися
+                </button>
+            </form>
+
+            <div style="text-align: center; padding-top: 16px; border-top: 1px solid var(--gray-200);">
+                <p style="margin-bottom: 12px; color: var(--gray-600);">Вже маєте профіль?</p>
+                <a href="{% url 'login' %}" style="color: var(--primary); text-decoration: none; font-weight: 600;">
+                    Увійти <i class="fas fa-arrow-right" style="margin-left: 4px;"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media (max-width: 1024px) {
+        div[style*="display: grid"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+
+    .form-control, .form-select {
+        width: 100% !important;
+    }
+</style>
 {% endblock %}
