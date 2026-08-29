@@ -1,24 +1,111 @@
 {% load static %}
-<header class="site-header">
-    <nav class="site-nav">
-        <a href="/" class="brand">GroupPortal</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm py-2" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-bold text-white fs-4" href="{% url 'home' %}">
+            <span class="badge bg-primary me-2 p-2 rounded-3 shadow-sm">
+                <i class="bi bi-mortarboard-fill"></i>
+            </span>
+            <span style="letter-spacing: -0.5px;">Group<span class="text-primary">Portal</span></span>
+        </a>
 
-        <ul class="nav-links">
-            <li><a href="/" title="Головна сторінка"><i class="fas fa-home"></i> Головна</a></li>
-            <li><a href="{% url 'topic_list' %}" title="Форум для обговорення"><i class="fas fa-comments"></i> Форум</a></li>
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'create_topic' %}" title="Створити нову тему"><i class="fas fa-plus"></i> Нова тема</a></li>
-                <li style="margin-left: auto; display: flex; align-items: center; gap: 16px;">
-                    <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; color: white;">
-                        {{ user.username|first|upper }}
-                    </div>
-                    <span style="color: #f3f4f6; font-size: 0.95rem;">{{ user.username }}</span>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Перемкнути навігацію">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-1">
+                <li class="nav-item">
+                    <a class="nav-link px-3 rounded-2 text-white-50 hover-text-white d-flex align-items-center gap-2" href="{% url 'home' %}">
+                        <i class="bi bi-house-door"></i> Головна
+                    </a>
                 </li>
-                <li><a href="{% url 'logout' %}" title="Вийти з профілю"><i class="fas fa-sign-out-alt"></i> Вийти</a></li>
-            {% else %}
-                <li style="margin-left: auto;"><a href="{% url 'login' %}" title="Увійти в профіль"><i class="fas fa-sign-in-alt"></i> Увійти</a></li>
-                <li><a href="{% url 'register' %}" class="btn-register" title="Створити новий профіль"><i class="fas fa-user-plus"></i> Реєстрація</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-</header>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle px-3 rounded-2 text-white-50 hover-text-white d-flex align-items-center gap-2" href="#" id="journalDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-journal-check"></i> Журнал
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark border-0 shadow" aria-labelledby="journalDropdown">
+                        <li><a class="dropdown-item py-2" href="{% url 'journal:all_grades' %}"><i class="bi bi-table me-2 text-primary"></i>Всі оцінки</a></li>
+                        <li><a class="dropdown-item py-2" href="{% url 'journal:student_journal' %}"><i class="bi bi-person-lines-fill me-2 text-info"></i>Мій журнал</a></li>
+                        {% if user.is_staff %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2" href="{% url 'journal:grade_create' %}"><i class="bi bi-plus-circle me-2 text-success"></i>Виставити оцінку</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-3 rounded-2 text-white-50 hover-text-white d-flex align-items-center gap-2" href="{% url 'calendar' %}">
+                        <i class="bi bi-calendar3"></i> Календар
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle px-3 rounded-2 text-white-50 hover-text-white d-flex align-items-center gap-2" href="#" id="portfolioDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-briefcase"></i> Портфоліо
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark border-0 shadow" aria-labelledby="portfolioDropdown">
+                        <li><a class="dropdown-item py-2" href="{% url 'public_project_list' %}"><i class="bi bi-grid-3x3-gap-fill me-2 text-warning"></i>Стрічка проєктів</a></li>
+                        {% if user.is_authenticated %}
+                        <li><a class="dropdown-item py-2" href="{% url 'portfolio_detail' %}"><i class="bi bi-person-badge me-2 text-info"></i>Моє портфоліо</a></li>
+                        <li><a class="dropdown-item py-2" href="{% url 'project_create' %}"><i class="bi bi-folder-plus me-2 text-success"></i>Додати проєкт</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-3 rounded-2 text-white-50 hover-text-white d-flex align-items-center gap-2" href="{% url 'voting_list' %}">
+                        <i class="bi bi-check2-square"></i> Голосування
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-3 rounded-2 text-white-50 hover-text-white d-flex align-items-center gap-2" href="{% url 'poll_list' %}">
+                        <i class="bi bi-card-checklist"></i> Опитування
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-3 rounded-2 text-white-50 hover-text-white d-flex align-items-center gap-2" href="{% url 'topic_list' %}">
+                        <i class="bi bi-chat-left-text"></i> Форум
+                    </a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center gap-2">
+                {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2 py-1 px-3 rounded-pill" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="rounded-circle bg-primary text-white d-inline-flex justify-content-center align-items-center" style="width: 26px; height: 26px; font-size: 0.8rem;">
+                                {{ user.username|first|upper }}
+                            </span>
+                            <span class="fw-semibold">{{ user.username }}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end border-0 shadow" aria-labelledby="userMenuButton">
+                            <li><h6 class="dropdown-header text-white-50">Користувач: {{ user.username }}</h6></li>
+                            <li><a class="dropdown-item py-2" href="{% url 'portfolio_detail' %}"><i class="bi bi-person me-2 text-primary"></i>Профіль та портфоліо</a></li>
+                            <li><a class="dropdown-item py-2" href="{% url 'journal:student_journal' %}"><i class="bi bi-journal-bookmark me-2 text-info"></i>Мій щоденник</a></li>
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item py-2" href="/admin/" target="_blank"><i class="bi bi-shield-lock me-2 text-warning"></i>Панель адміністратора</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item py-2 text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Вийти</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm px-3 rounded-pill">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Увійти
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-sm px-3 rounded-pill shadow-sm">
+                        <i class="bi bi-person-plus me-1"></i> Реєстрація
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .hover-text-white:hover {
+        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+    .navbar-dark .navbar-nav .nav-link {
+        font-size: 0.95rem;
+        transition: all 0.2s ease-in-out;
+    }
+</style>

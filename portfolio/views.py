@@ -95,6 +95,7 @@ def portfolio_edit(request):
     )
 
 
+@login_required
 def author_portfolio(request, user_id):
     """
     Display a user's public portfolio and all public projects.
