@@ -5,7 +5,7 @@ from django.views.generic import RedirectView
 from accounts.views import CustomLoginView, CustomLogoutView, RegisterView
 
 urlpatterns = [
-    # Автоматичне перенаправлення з головної (/) на сторінку логіну (/login/)
+    
     path('', RedirectView.as_view(url='/login/', permanent=False)),
 
     path('admin/', admin.site.urls),
