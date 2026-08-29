@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Форум - GroupPortal{% endblock %}
+
+{% block content %}
+
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/forum.css' %}">
+    
+<div class="mb-4">
+    <h1>💬 Список тем форуму</h1>
+    <p class="text-muted" style="font-size: 1.1rem;">Обговорюйте актуальні теми та спілкуйтесь з членами спільноти</p>
+</div>
+
+<div class="mb-4">
+    <a href="{% url 'create_topic' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Створити нову тему
+    </a>
+</div>
+
+{% if topics %}
+    <div class="list-group">
+        {% for topic in topics %}
+            <a href="{% url 'topic_chat' topic.id %}" class="list-group-item list-group-item-action">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div style="flex: 1;">
+                        <h5 class="mb-2">
+                            <i class="fas fa-comments" style="color: var(--primary); margin-right: 8px;"></i>
+                            {{ topic.title }}
+                        </h5>
+                        <div class="text-muted" style="font-size: 0.9rem; margin-bottom: 8px;">
+                            <i class="fas fa-calendar-alt"></i> 
+                            Створено: {{ topic.created_at|date:"d.m.Y H:i" }}
+                        </div>
+                        {% if topic.description %}
+                            <p style="margin: 8px 0 0 0; color: var(--gray-600); font-size: 0.95rem;">
+                                {{ topic.description|truncatewords:20 }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="badge badge-primary">
+                            <i class="fas fa-comments"></i> 
+                            {% if topic.post_set.count %}{{ topic.post_set.count }}{% else %}0{% endif %} постів
+                        </span>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info" style="text-align: center; padding: 40px 20px;">
+        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 16px; display: block;"></i>
+        <h5>Немає доступних тем</h5>
+        <p class="mb-0">Станьте першим! Створіть нову тему для обговорення.</p>
+    </div>
+{% endif %}
+
+<style>
+    .list-group-item-action {
+        border-color: var(--gray-200);
+    }
+    
+    .list-group-item-action:hover {
+        border-color: var(--primary) !important;
+    }
+</style>
+{% endblock %}

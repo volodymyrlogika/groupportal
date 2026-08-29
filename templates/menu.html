@@ -1,3 +1,24 @@
-<header>
+{% load static %}
+<header class="site-header">
+    <nav class="site-nav">
+        <a href="/" class="brand">GroupPortal</a>
 
+        <ul class="nav-links">
+            <li><a href="/" title="Головна сторінка"><i class="fas fa-home"></i> Головна</a></li>
+            <li><a href="{% url 'topic_list' %}" title="Форум для обговорення"><i class="fas fa-comments"></i> Форум</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'create_topic' %}" title="Створити нову тему"><i class="fas fa-plus"></i> Нова тема</a></li>
+                <li style="margin-left: auto; display: flex; align-items: center; gap: 16px;">
+                    <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; color: white;">
+                        {{ user.username|first|upper }}
+                    </div>
+                    <span style="color: #f3f4f6; font-size: 0.95rem;">{{ user.username }}</span>
+                </li>
+                <li><a href="{% url 'logout' %}" title="Вийти з профілю"><i class="fas fa-sign-out-alt"></i> Вийти</a></li>
+            {% else %}
+                <li style="margin-left: auto;"><a href="{% url 'login' %}" title="Увійти в профіль"><i class="fas fa-sign-in-alt"></i> Увійти</a></li>
+                <li><a href="{% url 'register' %}" class="btn-register" title="Створити новий профіль"><i class="fas fa-user-plus"></i> Реєстрація</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 </header>
