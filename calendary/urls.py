@@ -5,7 +5,7 @@ from .views import (
     EventDetailView,
     EventCreateView,
     EventUpdateView,
-    EventDeleteView,
+    EventDeleteView,    
 )
 
 

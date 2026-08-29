@@ -1,5 +1,6 @@
 import calendar
 from datetime import date
+from django.utils import timezone
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
@@ -12,6 +13,8 @@ from django.views.generic import (
 )
 
 from .models import Event
+from .forms import EventForm
+
 
 
 class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -27,14 +30,12 @@ class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
         )
 
 
-# =========================
-# ГОЛОВНА СТОРІНКА КАЛЕНДАРЯ
-# =========================
-
 class CalendarView(LoginRequiredMixin, ListView):
 
     model = Event
+
     template_name = 'calendary/calendar.html'
+
     context_object_name = 'events'
 
     def get_context_data(self, **kwargs):
@@ -43,8 +44,10 @@ class CalendarView(LoginRequiredMixin, ListView):
 
         today = date.today()
 
-        # Отримуємо рік і місяць з адреси
+        # Отримуємо рік і місяць з URL
+
         try:
+
             year = int(
                 self.request.GET.get(
                     'year',
@@ -65,7 +68,8 @@ class CalendarView(LoginRequiredMixin, ListView):
             month = today.month
 
 
-        # Якщо місяць вийшов за межі
+        # Перевірка місяця
+
         if month < 1:
 
             month = 12
@@ -77,30 +81,43 @@ class CalendarView(LoginRequiredMixin, ListView):
             year += 1
 
 
-        # Календар починається з понеділка
-        cal = calendar.Calendar(firstweekday=0)
+        cal = calendar.Calendar(
+            firstweekday=0
+        )
 
         weeks = []
 
 
         # Події поточного місяця
+
         events = Event.objects.filter(
+
             start_time__year=year,
+
             start_time__month=month
+
         ).order_by('start_time')
 
 
-        # Створюємо тижні
-        for week in cal.monthdatescalendar(year, month):
+        # Формуємо календар
+
+        for week in cal.monthdatescalendar(
+            year,
+            month
+        ):
 
             week_data = []
 
             for day in week:
 
                 day_events = [
+
                     event
+
                     for event in events
+
                     if event.start_time.date() == day
+
                 ]
 
                 week_data.append({
@@ -120,8 +137,12 @@ class CalendarView(LoginRequiredMixin, ListView):
             weeks.append(week_data)
 
 
+        # Назви місяців
+
         month_names = [
+
             '',
+
             'Січень',
             'Лютий',
             'Березень',
@@ -134,10 +155,11 @@ class CalendarView(LoginRequiredMixin, ListView):
             'Жовтень',
             'Листопад',
             'Грудень',
+
         ]
 
 
-    
+        # Місяці для випадаючого меню
 
         context['month_names'] = [
 
@@ -157,11 +179,18 @@ class CalendarView(LoginRequiredMixin, ListView):
         ]
 
 
+        # Роки
+
         context['years'] = range(
+
             today.year - 5,
+
             today.year + 6
+
         )
 
+
+        # Попередній місяць
 
         if month == 1:
 
@@ -174,6 +203,8 @@ class CalendarView(LoginRequiredMixin, ListView):
             previous_year = year
 
 
+        # Наступний місяць
+
         if month == 12:
 
             next_month = 1
@@ -185,6 +216,7 @@ class CalendarView(LoginRequiredMixin, ListView):
             next_year = year
 
 
+        # Передаємо дані в шаблон
 
         context['weeks'] = weeks
 
@@ -195,9 +227,11 @@ class CalendarView(LoginRequiredMixin, ListView):
         context['current_month'] = month
 
         context['previous_month'] = previous_month
+
         context['previous_year'] = previous_year
 
         context['next_month'] = next_month
+
         context['next_year'] = next_year
 
 
@@ -213,22 +247,49 @@ class EventDetailView(LoginRequiredMixin, DetailView):
 
     context_object_name = 'event'
 
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        event = self.object
+        now = timezone.now()
+
+        if event.end_time < now:
+
+            status = 'finished'
+            status_text = 'Завершено'
+            status_class = 'secondary'
+
+        elif event.start_time <= now <= event.end_time:
+
+            status = 'active'
+            status_text = 'Зараз проходить'
+            status_class = 'success'
+
+        else:
+
+            status = 'planned'
+            status_text = 'Заплановано'
+            status_class = 'primary'
+
+        context['event_status'] = status
+        context['event_status_text'] = status_text
+        context['event_status_class'] = status_class
+
+        context['guest_count'] = event.guest_list.count()
+
+        return context
+
+
+
 
 class EventCreateView(StaffRequiredMixin, CreateView):
 
     model = Event
 
-    template_name = 'calendary/event_form.html'
+    form_class = EventForm
 
-    fields = [
-        'title',
-        'description',
-        'start_time',
-        'end_time',
-        'location',
-        'meeting_link',
-        'guest_list',
-    ]
+    template_name = 'calendary/event_form.html'
 
     success_url = reverse_lazy('calendar')
 
@@ -244,17 +305,9 @@ class EventUpdateView(StaffRequiredMixin, UpdateView):
 
     model = Event
 
-    template_name = 'calendary/event_form.html'
+    form_class = EventForm
 
-    fields = [
-        'title',
-        'description',
-        'start_time',
-        'end_time',
-        'location',
-        'meeting_link',
-        'guest_list',
-    ]
+    template_name = 'calendary/event_form.html'
 
     success_url = reverse_lazy('calendar')
 
