@@ -1,27 +1,21 @@
-"""
-URL configuration for groupportal project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-groupportals:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, include
+
+from django.views.generic import RedirectView
 from django.conf.urls.static import static
 
 from . import settings
+from accounts.views import CustomLoginView, CustomLogoutView, RegisterView
 
 urlpatterns = [
+    
     path('admin/', admin.site.urls),
-    path('', include('calendary.urls')),
+    path('calendar/', include('calendary.urls')),
+    path('journal/', include('journal.urls')),
+
+    path('', include('portfolio.urls')),
+    path('voting/', include('voting.urls')),
+    path('polls/', include('poll.urls')),
+    path('forum/', include('forum.urls')),
     path('', include('accounts.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
