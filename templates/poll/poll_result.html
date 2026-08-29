@@ -1,0 +1,227 @@
+`{% extends "base.html" %}
+
+{% block title %}Результат | {{ poll.title }}{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-lg-9">
+
+            <!-- Result Header -->
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body text-center p-5">
+
+                    <div class="mb-3">
+                        {% if percentage >= 80 %}
+                            <i class="bi bi-trophy-fill text-warning display-3"></i>
+                        {% elif percentage >= 50 %}
+                            <i class="bi bi-check-circle-fill text-success display-3"></i>
+                        {% else %}
+                            <i class="bi bi-arrow-repeat text-primary display-3"></i>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="fw-bold mb-2">
+                        Тест завершено!
+                    </h1>
+
+                    <p class="text-muted mb-4">
+                        {{ poll.title }}
+                    </p>
+
+
+                    <!-- Score -->
+
+                    <div class="display-4 fw-bold text-primary mb-2">
+                        {{ correct_answers }} / {{ total_questions }}
+                    </div>
+
+                    <div class="fs-5 text-muted">
+                        {{ percentage }}% правильних відповідей
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Progress -->
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <span class="fw-semibold">
+                            Результат
+                        </span>
+
+                        <span class="fw-semibold">
+                            {{ percentage }}%
+                        </span>
+
+                    </div>
+
+                    <div class="progress" style="height: 10px;">
+                        <div
+                            class="progress-bar"
+                            role="progressbar"
+                            aria-valuenow="{{ percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Questions -->
+
+            <h3 class="fw-bold mb-3">
+                Розбір відповідей
+            </h3>
+
+
+            {% for result in results %}
+
+                <div class="card border-0 shadow-sm mb-3">
+
+                    <div class="card-body p-4">
+
+                        <!-- Question -->
+
+                        <div class="d-flex align-items-start gap-3 mb-3">
+
+                            <div class="fw-bold text-primary">
+                                {{ forloop.counter }}.
+                            </div>
+
+                            <div class="fw-semibold">
+                                {{ result.question.text }}
+                            </div>
+
+                        </div>
+
+
+                        <!-- Result -->
+
+                        {% if result.is_correct %}
+
+                            <div class="alert alert-success border-0 mb-0">
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    <div>
+                                        <strong>Правильно!</strong>
+
+                                        <div class="small mt-1">
+                                            Ваша відповідь:
+                                            {{ result.selected_choice.text }}
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="alert alert-danger border-0 mb-3">
+
+                                <div class="d-flex align-items-center gap-2">
+
+                                    <i class="bi bi-x-circle-fill"></i>
+
+                                    <div>
+                                        <strong>Неправильно</strong>
+
+                                        {% if result.selected_choice %}
+                                            <div class="small mt-1">
+                                                Ваша відповідь:
+                                                {{ result.selected_choice.text }}
+                                            </div>
+                                        {% else %}
+                                            <div class="small mt-1">
+                                                Ви не обрали відповідь.
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            {% if result.correct_choice %}
+
+                                <div class="alert alert-success border-0 mb-0">
+
+                                    <div class="d-flex align-items-center gap-2">
+
+                                        <i class="bi bi-check-circle-fill"></i>
+
+                                        <div>
+                                            <strong>Правильна відповідь:</strong>
+
+                                            <div class="small mt-1">
+                                                {{ result.correct_choice.text }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+
+            <!-- Buttons -->
+
+            <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center mt-4">
+
+                <a
+                    href="{% url 'poll_list' %}"
+                    class="btn btn-light border px-4">
+
+                    <i class="bi bi-arrow-left me-2"></i>
+                    До всіх тестів
+
+                </a>
+
+                <a
+                    href="{% url 'poll_start' poll.pk %}"
+                    class="btn btn-primary px-4">
+
+                    <i class="bi bi-arrow-repeat me-2"></i>
+                    Пройти ще раз
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

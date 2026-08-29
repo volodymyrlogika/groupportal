@@ -1,0 +1,389 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Edit Portfolio{% endblock %}
+
+{% block content %}
+
+<div style="
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 40px 0 60px;
+    color: #172033;
+">
+
+    <div class="container">
+
+        <!-- Page header -->
+
+        <div class="mb-4">
+
+            <a
+                href="{% url 'portfolio_detail' %}"
+                style="
+                    color: #64748b;
+                    text-decoration: none;
+                    font-size: 0.95rem;
+                "
+            >
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Portfolio
+            </a>
+
+            <h1 style="
+                font-size: 2rem;
+                font-weight: 700;
+                color: #172033;
+                margin: 16px 0 6px;
+            ">
+                Edit Portfolio
+            </h1>
+
+            <p style="
+                color: #64748b;
+                margin: 0;
+            ">
+                Update your personal information and portfolio links.
+            </p>
+
+        </div>
+
+
+        <!-- Form -->
+
+        <div style="
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+            padding: 32px;
+        ">
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- Non-field errors -->
+
+                {% if form.non_field_errors %}
+
+                    <div
+                        class="alert alert-danger"
+                        role="alert"
+                    >
+                        {{ form.non_field_errors }}
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Title -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="{{ form.title.id_for_label }}"
+                        style="
+                            display: block;
+                            font-weight: 600;
+                            color: #172033;
+                            margin-bottom: 7px;
+                        "
+                    >
+                        Portfolio title
+                    </label>
+
+                    {{ form.title }}
+
+                    {% if form.title.errors %}
+
+                        <div style="
+                            color: #dc2626;
+                            font-size: 0.875rem;
+                            margin-top: 5px;
+                        ">
+                            {{ form.title.errors }}
+                        </div>
+
+                    {% endif %}
+
+                    <div style="
+                        color: #64748b;
+                        font-size: 0.85rem;
+                        margin-top: 5px;
+                    ">
+                        A short title for your portfolio.
+                    </div>
+
+                </div>
+
+
+                <!-- Description -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="{{ form.description.id_for_label }}"
+                        style="
+                            display: block;
+                            font-weight: 600;
+                            color: #172033;
+                            margin-bottom: 7px;
+                        "
+                    >
+                        Description
+                    </label>
+
+                    {{ form.description }}
+
+                    {% if form.description.errors %}
+
+                        <div style="
+                            color: #dc2626;
+                            font-size: 0.875rem;
+                            margin-top: 5px;
+                        ">
+                            {{ form.description.errors }}
+                        </div>
+
+                    {% endif %}
+
+                    <div style="
+                        color: #64748b;
+                        font-size: 0.85rem;
+                        margin-top: 5px;
+                    ">
+                        Tell visitors a little about yourself and your skills.
+                    </div>
+
+                </div>
+
+
+                <!-- Avatar -->
+
+                <div class="mb-4">
+
+                    <label
+                        for="{{ form.avatar.id_for_label }}"
+                        style="
+                            display: block;
+                            font-weight: 600;
+                            color: #172033;
+                            margin-bottom: 7px;
+                        "
+                    >
+                        Avatar
+                    </label>
+
+
+                    {% if portfolio.avatar %}
+
+                        <div class="d-flex align-items-center gap-3 mb-3">
+
+                            <img
+                                src="{{ portfolio.avatar.url }}"
+                                alt="{{ portfolio.user.username }}"
+                                style="
+                                    width: 80px;
+                                    height: 80px;
+                                    object-fit: cover;
+                                    border-radius: 50%;
+                                    border: 1px solid #e2e8f0;
+                                "
+                            >
+
+                            <div>
+                                <div style="
+                                    color: #475569;
+                                    font-size: 0.9rem;
+                                    margin-bottom: 4px;
+                                ">
+                                    Current avatar
+                                </div>
+
+                                <div style="
+                                    color: #64748b;
+                                    font-size: 0.8rem;
+                                ">
+                                    Upload a new image to replace it.
+                                </div>
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {{ form.avatar }}
+
+                    {% if form.avatar.errors %}
+
+                        <div style="
+                            color: #dc2626;
+                            font-size: 0.875rem;
+                            margin-top: 5px;
+                        ">
+                            {{ form.avatar.errors }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Social links -->
+
+                <div style="
+                    border-top: 1px solid #e2e8f0;
+                    padding-top: 24px;
+                    margin-top: 28px;
+                    margin-bottom: 24px;
+                ">
+
+                    <h2 style="
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 4px;
+                    ">
+                        Social links
+                    </h2>
+
+                    <p style="
+                        color: #64748b;
+                        font-size: 0.9rem;
+                        margin-bottom: 20px;
+                    ">
+                        Add links to your professional profiles.
+                    </p>
+
+
+                    <!-- GitHub -->
+
+                    <div class="mb-4">
+
+                        <label
+                            for="{{ form.github_url.id_for_label }}"
+                            style="
+                                display: block;
+                                font-weight: 600;
+                                color: #172033;
+                                margin-bottom: 7px;
+                            "
+                        >
+                            <i class="bi bi-github me-1"></i>
+                            GitHub
+                        </label>
+
+                        {{ form.github_url }}
+
+                        {% if form.github_url.errors %}
+
+                            <div style="
+                                color: #dc2626;
+                                font-size: 0.875rem;
+                                margin-top: 5px;
+                            ">
+                                {{ form.github_url.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- LinkedIn -->
+
+                    <div class="mb-2">
+
+                        <label
+                            for="{{ form.linkedin_url.id_for_label }}"
+                            style="
+                                display: block;
+                                font-weight: 600;
+                                color: #172033;
+                                margin-bottom: 7px;
+                            "
+                        >
+                            <i class="bi bi-linkedin me-1"></i>
+                            LinkedIn
+                        </label>
+
+                        {{ form.linkedin_url }}
+
+                        {% if form.linkedin_url.errors %}
+
+                            <div style="
+                                color: #dc2626;
+                                font-size: 0.875rem;
+                                margin-top: 5px;
+                            ">
+                                {{ form.linkedin_url.errors }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- Buttons -->
+
+                <div style="
+                    border-top: 1px solid #e2e8f0;
+                    padding-top: 24px;
+                    margin-top: 28px;
+                ">
+
+                    <div class="d-flex justify-content-end gap-2 flex-wrap">
+
+                        <a
+                            href="{% url 'portfolio_detail' %}"
+                            class="btn"
+                            style="
+                                background: #ffffff;
+                                border: 1px solid #e2e8f0;
+                                color: #475569;
+                                border-radius: 7px;
+                                padding: 9px 18px;
+                                font-weight: 500;
+                            "
+                        >
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn"
+                            style="
+                                background: #2563eb;
+                                border: 1px solid #2563eb;
+                                color: #ffffff;
+                                border-radius: 7px;
+                                padding: 9px 18px;
+                                font-weight: 500;
+                            "
+                        >
+                            <i class="bi bi-check-lg me-1"></i>
+                            Save Portfolio
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

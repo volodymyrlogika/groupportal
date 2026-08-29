@@ -1,0 +1,234 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Add Project Image{% endblock %}
+
+{% block content %}
+
+<div style="
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 40px 0 60px;
+    color: #172033;
+">
+
+    <div class="container">
+
+        <!-- Page header -->
+
+        <div class="mb-4">
+
+            <a
+                href="{% url 'project_detail' project.pk %}"
+                style="
+                    color: #64748b;
+                    text-decoration: none;
+                    font-size: 0.95rem;
+                "
+            >
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Project
+            </a>
+
+            <h1 style="
+                font-size: 2rem;
+                font-weight: 700;
+                color: #172033;
+                margin: 16px 0 6px;
+            ">
+                Add Project Image
+            </h1>
+
+            <p style="
+                color: #64748b;
+                margin: 0;
+            ">
+                Add an image to
+                <strong>{{ project.title }}</strong>.
+            </p>
+
+        </div>
+
+
+        <!-- Form card -->
+
+        <div
+            class="row justify-content-center"
+        >
+
+            <div class="col-12 col-md-8 col-lg-6">
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                    padding: 32px;
+                ">
+
+                    <form
+                        method="post"
+                        enctype="multipart/form-data"
+                    >
+
+                        {% csrf_token %}
+
+
+                        <!-- Non-field errors -->
+
+                        {% if form.non_field_errors %}
+
+                            <div
+                                class="alert alert-danger"
+                                role="alert"
+                            >
+                                {{ form.non_field_errors }}
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- Image -->
+
+                        <div class="mb-4">
+
+                            <label
+                                for="{{ form.image.id_for_label }}"
+                                style="
+                                    display: block;
+                                    font-weight: 600;
+                                    color: #172033;
+                                    margin-bottom: 8px;
+                                "
+                            >
+                                Project image
+                            </label>
+
+                            {{ form.image }}
+
+                            {% if form.image.errors %}
+
+                                <div style="
+                                    color: #dc2626;
+                                    font-size: 0.875rem;
+                                    margin-top: 6px;
+                                ">
+                                    {{ form.image.errors }}
+                                </div>
+
+                            {% endif %}
+
+                            <div style="
+                                color: #64748b;
+                                font-size: 0.85rem;
+                                margin-top: 7px;
+                            ">
+                                Upload an image that showcases your project.
+                            </div>
+
+                        </div>
+
+
+                        <!-- Upload hint -->
+
+                        <div style="
+                            background: #f8fafc;
+                            border: 1px dashed #cbd5e1;
+                            border-radius: 10px;
+                            padding: 24px 18px;
+                            text-align: center;
+                            margin-bottom: 24px;
+                        ">
+
+                            <div style="
+                                width: 52px;
+                                height: 52px;
+                                margin: 0 auto 12px;
+                                border-radius: 50%;
+                                background: #dbeafe;
+                                color: #2563eb;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 22px;
+                            ">
+                                <i class="bi bi-image"></i>
+                            </div>
+
+                            <div style="
+                                color: #172033;
+                                font-weight: 600;
+                                margin-bottom: 5px;
+                            ">
+                                Project showcase image
+                            </div>
+
+                            <div style="
+                                color: #64748b;
+                                font-size: 0.85rem;
+                            ">
+                                Screenshots, UI previews or other project images
+                                can be uploaded here.
+                            </div>
+
+                        </div>
+
+
+                        <!-- Actions -->
+
+                        <div style="
+                            border-top: 1px solid #e2e8f0;
+                            padding-top: 24px;
+                        ">
+
+                            <div class="d-flex justify-content-end gap-2">
+
+                                <a
+                                    href="{% url 'project_detail' project.pk %}"
+                                    class="btn"
+                                    style="
+                                        background: #ffffff;
+                                        border: 1px solid #e2e8f0;
+                                        color: #475569;
+                                        border-radius: 7px;
+                                        padding: 9px 18px;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    Cancel
+                                </a>
+
+                                <button
+                                    type="submit"
+                                    class="btn"
+                                    style="
+                                        background: #2563eb;
+                                        border: 1px solid #2563eb;
+                                        color: #ffffff;
+                                        border-radius: 7px;
+                                        padding: 9px 18px;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    <i class="bi bi-upload me-1"></i>
+                                    Upload Image
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

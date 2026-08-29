@@ -6,12 +6,12 @@ from accounts.views import CustomLoginView, CustomLogoutView, RegisterView
 
 urlpatterns = [
     
-    path('', RedirectView.as_view(url='/login/', permanent=False)),
-
     path('admin/', admin.site.urls),
     path('journal/', include('journal.urls')),
 
-    path('register/', RegisterView.as_view(), name='register'),
-    path('login/', CustomLoginView.as_view(), name='login'),
-    path('logout/', CustomLogoutView.as_view(), name='logout'),
-]
+    path('', include('portfolio.urls')),
+    path('voting/', include('voting.urls')),
+    path('', include('poll.urls')),
+    path('', include('forum.urls')),
+    path('', include('accounts.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

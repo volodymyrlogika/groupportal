@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if portfolio.title %}
+        {{ portfolio.title }}
+    {% else %}
+        {{ author.username }}'s Portfolio
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div style="
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 40px 0 60px;
+    color: #172033;
+">
+
+    <div class="container">
+
+        <!-- =====================================================
+             PROFILE
+             ===================================================== -->
+
+        <div style="
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+            padding: 32px;
+        ">
+
+            <div class="row align-items-center g-4">
+
+                <!-- Avatar -->
+
+                <div class="col-auto">
+
+                    {% if portfolio.avatar %}
+
+                        <img
+                            src="{{ portfolio.avatar.url }}"
+                            alt="{{ author.username }}"
+                            style="
+                                width: 150px;
+                                height: 150px;
+                                object-fit: cover;
+                                border-radius: 50%;
+                                border: 4px solid #ffffff;
+                                box-shadow: 0 4px 15px rgba(15, 23, 42, 0.12);
+                            "
+                        >
+
+                    {% else %}
+
+                        <div style="
+                            width: 150px;
+                            height: 150px;
+                            border-radius: 50%;
+                            background: #172033;
+                            color: #ffffff;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 48px;
+                            font-weight: 700;
+                        ">
+                            {{ author.username|first|upper }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Profile information -->
+
+                <div class="col">
+
+                    <div>
+
+                        <h1 style="
+                            font-size: 2.2rem;
+                            font-weight: 700;
+                            color: #172033;
+                            margin: 0 0 4px;
+                        ">
+                            {% if portfolio.title %}
+                                {{ portfolio.title }}
+                            {% else %}
+                                {{ author.username }}
+                            {% endif %}
+                        </h1>
+
+
+                        <div style="
+                            color: #2563eb;
+                            font-size: 1.1rem;
+                            font-weight: 500;
+                            margin-bottom: 14px;
+                        ">
+                            {{ author.username }}
+                        </div>
+
+
+                        {% if portfolio.description %}
+
+                            <p style="
+                                color: #64748b;
+                                line-height: 1.7;
+                                max-width: 700px;
+                                margin-bottom: 18px;
+                            ">
+                                {{ portfolio.description|linebreaksbr }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <!-- Social links -->
+
+                        <div class="d-flex flex-wrap gap-3">
+
+                            {% if portfolio.github_url %}
+
+                                <a
+                                    href="{{ portfolio.github_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style="
+                                        color: #2563eb;
+                                        text-decoration: none;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    <i class="bi bi-github me-1"></i>
+                                    GitHub
+                                </a>
+
+                            {% endif %}
+
+
+                            {% if portfolio.linkedin_url %}
+
+                                <a
+                                    href="{{ portfolio.linkedin_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style="
+                                        color: #2563eb;
+                                        text-decoration: none;
+                                        font-weight: 500;
+                                    "
+                                >
+                                    <i class="bi bi-linkedin me-1"></i>
+                                    LinkedIn
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PUBLIC PROJECTS
+             ===================================================== -->
+
+        <div style="margin-top: 28px;">
+
+            <!-- Section header -->
+
+            <div class="mb-3">
+
+                <h2 style="
+                    font-size: 1.4rem;
+                    font-weight: 700;
+                    margin: 0;
+                    color: #172033;
+                ">
+                    Public Projects
+                </h2>
+
+            </div>
+
+
+            {% if projects %}
+
+                <div class="row g-4">
+
+                    {% for project in projects %}
+
+                        <div class="col-12 col-md-6 col-lg-4">
+
+                            <div style="
+                                height: 100%;
+                                overflow: hidden;
+                                background: #ffffff;
+                                border: 1px solid #e2e8f0;
+                                border-radius: 12px;
+                                box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                            ">
+
+                                <!-- Project image -->
+
+                                {% with first_image=project.images.all|first %}
+
+                                    {% if first_image %}
+
+                                        <img
+                                            src="{{ first_image.image.url }}"
+                                            alt="{{ project.title }}"
+                                            style="
+                                                width: 100%;
+                                                height: 190px;
+                                                object-fit: cover;
+                                                display: block;
+                                            "
+                                        >
+
+                                    {% else %}
+
+                                        <div style="
+                                            width: 100%;
+                                            height: 190px;
+                                            background: #172033;
+                                            color: #ffffff;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-size: 42px;
+                                        ">
+                                            <i class="bi bi-folder2-open"></i>
+                                        </div>
+
+                                    {% endif %}
+
+                                {% endwith %}
+
+
+                                <!-- Project content -->
+
+                                <div style="padding: 20px;">
+
+                                    <h3 style="
+                                        font-size: 1.15rem;
+                                        font-weight: 700;
+                                        color: #172033;
+                                        margin-bottom: 8px;
+                                    ">
+                                        {{ project.title }}
+                                    </h3>
+
+
+                                    <p style="
+                                        color: #64748b;
+                                        font-size: 0.95rem;
+                                        line-height: 1.5;
+                                        margin-bottom: 14px;
+                                    ">
+                                        {{ project.description|truncatewords:20 }}
+                                    </p>
+
+
+                                    <!-- Technologies -->
+
+                                    {% if project.technologies %}
+
+                                        <div style="margin-bottom: 16px;">
+
+                                            {% for technology in project.technologies.split|slice:":8" %}
+
+                                                <span style="
+                                                    display: inline-block;
+                                                    background: #dbeafe;
+                                                    color: #1d4ed8;
+                                                    font-size: 0.8rem;
+                                                    font-weight: 500;
+                                                    border-radius: 6px;
+                                                    padding: 5px 9px;
+                                                    margin: 0 4px 5px 0;
+                                                ">
+                                                    {{ technology }}
+                                                </span>
+
+                                            {% endfor %}
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    <!-- Open public project -->
+
+                                    <a
+                                        href="{% url 'public_project_detail' project.pk %}"
+                                        style="
+                                            color: #2563eb;
+                                            text-decoration: none;
+                                            font-weight: 500;
+                                        "
+                                    >
+                                        View project
+                                        <i class="bi bi-arrow-right ms-1"></i>
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <!-- Empty state -->
+
+                <div style="
+                    background: #ffffff;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 12px;
+                    padding: 50px 30px;
+                    text-align: center;
+                    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.06);
+                ">
+
+                    <div style="
+                        width: 64px;
+                        height: 64px;
+                        margin: 0 auto 16px;
+                        border-radius: 50%;
+                        background: #dbeafe;
+                        color: #2563eb;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 28px;
+                    ">
+                        <i class="bi bi-folder2-open"></i>
+                    </div>
+
+
+                    <h3 style="
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        color: #172033;
+                        margin-bottom: 8px;
+                    ">
+                        No public projects
+                    </h3>
+
+
+                    <p style="
+                        color: #64748b;
+                        margin-bottom: 0;
+                    ">
+                        This user has no public projects yet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
