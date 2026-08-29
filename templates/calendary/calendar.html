@@ -1,0 +1,652 @@
+{% extends 'base.html' %}
+
+{% block title %}Календар подій{% endblock %}
+
+{% block content %}
+
+<!-- ========================================= -->
+<!-- ЗАГОЛОВОК СТОРІНКИ -->
+<!-- ========================================= -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h1 class="fw-bold mb-1">
+            <i class="bi bi-calendar3"></i>
+            Календар
+        </h1>
+
+        <p class="text-muted mb-0">
+            Події та заходи групи
+        </p>
+    </div>
+
+
+    <!-- Кнопка створення події -->
+
+    <a
+        href="{% url 'event_create' %}"
+        class="btn btn-primary"
+    >
+        <i class="bi bi-plus-lg"></i>
+        Додати подію
+    </a>
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- КАЛЕНДАР -->
+<!-- ========================================= -->
+
+<div class="card shadow-sm border-0">
+
+
+    <!-- ===================================== -->
+    <!-- ВЕРХНЯ ПАНЕЛЬ КАЛЕНДАРЯ -->
+    <!-- ===================================== -->
+
+    <div class="card-header bg-white py-3">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+
+            <!-- ================================= -->
+            <!-- ПОПЕРЕДНІЙ МІСЯЦЬ -->
+            <!-- ================================= -->
+
+            <a
+                href="?year={{ previous_year }}&month={{ previous_month }}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-chevron-left"></i>
+            </a>
+
+
+            <!-- ================================= -->
+            <!-- МІСЯЦЬ + РІК -->
+            <!-- ================================= -->
+
+            <div class="dropdown">
+
+
+                <!-- Кнопка місяця -->
+
+                <button
+                    class="btn btn-light border-0"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+
+                    <div class="text-center">
+
+                        <h3 class="mb-0 fw-bold">
+
+                            {{ month_name }}
+
+                            <i class="bi bi-chevron-down fs-6"></i>
+
+                        </h3>
+
+                        <div class="text-muted">
+                            {{ year }}
+                        </div>
+
+                    </div>
+
+                </button>
+
+
+                <!-- ================================= -->
+                <!-- ВИПАДАЮЧЕ МЕНЮ -->
+                <!-- ================================= -->
+
+                <div
+                    class="dropdown-menu shadow p-3"
+                    style="min-width: 280px;"
+                >
+
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-calendar3"></i>
+                        Перейти до дати
+                    </h6>
+
+
+                    <form method="get">
+
+
+                        <!-- ========================= -->
+                        <!-- ВИБІР МІСЯЦЯ -->
+                        <!-- ========================= -->
+
+                        <label class="form-label">
+                            Місяць
+                        </label>
+
+                        <select
+                            name="month"
+                            class="form-select mb-3"
+                        >
+
+                            {% for number, name in month_names %}
+
+                                <option
+                                    value="{{ number }}"
+                                    {% if number == current_month %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+
+                        <!-- ========================= -->
+                        <!-- ВИБІР РОКУ -->
+                        <!-- ========================= -->
+
+                        <label class="form-label">
+                            Рік
+                        </label>
+
+                        <select
+                            name="year"
+                            class="form-select mb-3"
+                        >
+
+                            {% for selected_year in years %}
+
+                                <option
+                                    value="{{ selected_year }}"
+                                    {% if selected_year == year %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ selected_year }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+
+                        <!-- ========================= -->
+                        <!-- КНОПКА ПЕРЕХОДУ -->
+                        <!-- ========================= -->
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+
+                            <i class="bi bi-calendar-check"></i>
+
+                            Перейти
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================= -->
+            <!-- НАСТУПНИЙ МІСЯЦЬ -->
+            <!-- ================================= -->
+
+            <a
+                href="?year={{ next_year }}&month={{ next_month }}"
+                class="btn btn-outline-secondary"
+            >
+                <i class="bi bi-chevron-right"></i>
+            </a>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- ДНІ ТИЖНЯ -->
+    <!-- ========================================= -->
+
+    <div class="calendar-weekdays">
+
+        <div>Пн</div>
+
+        <div>Вт</div>
+
+        <div>Ср</div>
+
+        <div>Чт</div>
+
+        <div>Пт</div>
+
+        <div class="text-primary">
+            Сб
+        </div>
+
+        <div class="text-danger">
+            Нд
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- ДАТИ КАЛЕНДАРЯ -->
+    <!-- ========================================= -->
+
+    <div class="calendar-grid">
+
+
+        {% for week in weeks %}
+
+
+            {% for day in week %}
+
+
+                <div
+                    class="
+                        calendar-day
+
+                        {% if not day.current_month %}
+                            other-month
+                        {% endif %}
+
+                        {% if day.today %}
+                            today
+                        {% endif %}
+                    "
+                >
+
+
+                    <!-- ============================= -->
+                    <!-- НОМЕР ДНЯ -->
+                    <!-- ============================= -->
+
+                    <div class="day-number">
+
+
+                        {% if day.today %}
+
+                            <span class="today-number">
+                                {{ day.date.day }}
+                            </span>
+
+                        {% else %}
+
+                            {{ day.date.day }}
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    <!-- ============================= -->
+                    <!-- ПОДІЇ -->
+                    <!-- ============================= -->
+
+                    <div class="day-events">
+
+
+                        {% for event in day.events %}
+
+
+                            <a
+                                href="{% url 'event_detail' event.pk %}"
+                                class="calendar-event"
+                                title="{{ event.title }}"
+                            >
+
+                                <span class="event-time">
+                                    {{ event.start_time|date:"H:i" }}
+                                </span>
+
+                                <span>
+                                    {{ event.title }}
+                                </span>
+
+                            </a>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- CSS КАЛЕНДАРЯ -->
+<!-- ========================================= -->
+
+<style>
+
+
+/* ========================================= */
+/* ДНІ ТИЖНЯ */
+/* ========================================= */
+
+.calendar-weekdays {
+
+    display: grid;
+
+    grid-template-columns: repeat(7, 1fr);
+
+    background-color: #f8f9fa;
+
+    border-bottom: 1px solid #dee2e6;
+
+}
+
+
+.calendar-weekdays div {
+
+    text-align: center;
+
+    padding: 12px;
+
+    font-weight: 600;
+
+    color: #6c757d;
+
+    border-right: 1px solid #dee2e6;
+
+}
+
+
+/* ========================================= */
+/* СІТКА КАЛЕНДАРЯ */
+/* ========================================= */
+
+.calendar-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(7, 1fr);
+
+}
+
+
+/* ========================================= */
+/* ОКРЕМИЙ ДЕНЬ */
+/* ========================================= */
+
+.calendar-day {
+
+    min-height: 120px;
+
+    padding: 8px;
+
+    background-color: white;
+
+    border-right: 1px solid #dee2e6;
+
+    border-bottom: 1px solid #dee2e6;
+
+    transition: background-color 0.15s;
+
+}
+
+
+/* Ефект при наведенні */
+
+.calendar-day:hover {
+
+    background-color: #f8f9fa;
+
+}
+
+
+/* ========================================= */
+/* ДНІ ІНШОГО МІСЯЦЯ */
+/* ========================================= */
+
+.other-month {
+
+    background-color: #f5f5f5 !important;
+
+    color: #adb5bd;
+
+}
+
+
+/* ========================================= */
+/* НОМЕР ДНЯ */
+/* ========================================= */
+
+.day-number {
+
+    font-weight: 600;
+
+    margin-bottom: 8px;
+
+    height: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+}
+
+
+/* ========================================= */
+/* СЬОГОДНІ */
+/* ========================================= */
+
+.today-number {
+
+    background-color: #0d6efd;
+
+    color: white;
+
+    width: 30px;
+
+    height: 30px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+/* ========================================= */
+/* СПИСОК ПОДІЙ */
+/* ========================================= */
+
+.day-events {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+}
+
+
+/* ========================================= */
+/* ОКРЕМА ПОДІЯ */
+/* ========================================= */
+
+.calendar-event {
+
+    display: block;
+
+    padding: 5px 7px;
+
+    background-color: #e7f1ff;
+
+    color: #0d6efd;
+
+    border-left: 3px solid #0d6efd;
+
+    border-radius: 4px;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+}
+
+
+/* Подія при наведенні */
+
+.calendar-event:hover {
+
+    background-color: #cfe2ff;
+
+    color: #084298;
+
+}
+
+
+/* Час події */
+
+.event-time {
+
+    font-weight: 600;
+
+    margin-right: 3px;
+
+}
+
+
+/* ========================================= */
+/* ВИПАДАЮЧЕ МЕНЮ */
+/* ========================================= */
+
+.dropdown-menu {
+
+    border: none;
+
+    border-radius: 10px;
+
+}
+
+
+/* ========================================= */
+/* ПЛАНШЕТ */
+/* ========================================= */
+
+@media (max-width: 768px) {
+
+
+    .calendar-day {
+
+        min-height: 90px;
+
+        padding: 5px;
+
+    }
+
+
+    .calendar-weekdays div {
+
+        padding: 8px 2px;
+
+        font-size: 13px;
+
+    }
+
+
+    .calendar-event {
+
+        font-size: 10px;
+
+        padding: 3px;
+
+    }
+
+
+}
+
+
+/* ========================================= */
+/* ТЕЛЕФОН */
+/* ========================================= */
+
+@media (max-width: 576px) {
+
+
+    .calendar-day {
+
+        min-height: 70px;
+
+        padding: 4px;
+
+    }
+
+
+    .calendar-weekdays div {
+
+        font-size: 11px;
+
+    }
+
+
+    .day-number {
+
+        font-size: 12px;
+
+    }
+
+
+    .calendar-event {
+
+        font-size: 9px;
+
+        padding: 2px;
+
+        border-left: none;
+
+    }
+
+
+    .event-time {
+
+        display: none;
+
+    }
+
+
+}
+
+
+</style>
+
+{% endblock %}

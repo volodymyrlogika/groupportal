@@ -1,0 +1,701 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-xl-9">
+
+        <!-- =============================== -->
+        <!-- ПОВЕРНЕННЯ ДО КАЛЕНДАРЯ -->
+        <!-- =============================== -->
+
+        <div class="mb-4">
+
+            <a
+                href="{% url 'calendar' %}"
+                class="text-decoration-none text-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Повернутися до календаря
+            </a>
+
+        </div>
+
+
+        <!-- =============================== -->
+        <!-- ОСНОВНА КАРТКА -->
+        <!-- =============================== -->
+
+        <div class="card border-0 shadow-sm overflow-hidden">
+
+
+            <!-- =============================== -->
+            <!-- ВЕРХНЯ ЧАСТИНА -->
+            <!-- =============================== -->
+
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+
+    <span class="opacity-75">
+        Подія групи
+    </span>
+
+    <span class="badge bg-{{ event_status_class }}">
+
+        {% if event_status == 'finished' %}
+
+            <i class="bi bi-check-circle"></i>
+
+        {% elif event_status == 'active' %}
+
+            <i class="bi bi-play-circle"></i>
+
+        {% else %}
+
+            <i class="bi bi-clock"></i>
+
+        {% endif %}
+
+        {{ event_status_text }}
+
+    </span>
+
+</div>
+
+    {% now "U" as current_timestamp %}
+
+    {% if event.end_time|date:"U" < current_timestamp %}
+
+        <span class="badge bg-secondary">
+            <i class="bi bi-check-circle"></i>
+            Завершено
+        </span>
+
+    {% elif event.start_time|date:"U" <= current_timestamp %}
+
+        <span class="badge bg-success">
+            <i class="bi bi-play-circle"></i>
+            Зараз проходить
+        </span>
+
+    {% else %}
+
+        <span class="badge bg-primary">
+            <i class="bi bi-clock"></i>
+            Заплановано
+        </span>
+
+    {% endif %}
+
+</div>
+
+
+            <!-- =============================== -->
+            <!-- ІНФОРМАЦІЯ -->
+            <!-- =============================== -->
+
+            <div class="card-body p-4 p-md-5">
+
+
+                <!-- =============================== -->
+                <!-- ДАТА І ЧАС -->
+                <!-- =============================== -->
+
+                <div class="info-section">
+
+                    <div class="info-icon">
+
+                        <i class="bi bi-clock"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="info-title">
+                            Дата та час
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ event.start_time|date:"d.m.Y" }}
+
+                            <span class="text-muted mx-1">
+                                •
+                            </span>
+
+                            {{ event.start_time|date:"H:i" }}
+
+                            <span class="text-muted mx-1">
+                                —
+                            </span>
+
+                            {{ event.end_time|date:"H:i" }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <hr>
+
+
+                <!-- =============================== -->
+                <!-- МІСЦЕ -->
+                <!-- =============================== -->
+
+                <div class="info-section">
+
+                    <div class="info-icon">
+
+                        <i class="bi bi-geo-alt"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="info-title">
+                            Місце проведення
+                        </div>
+
+                        {% if event.location %}
+
+                            <div class="info-value">
+                                {{ event.location }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="text-muted">
+                                Місце не вказано
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <hr>
+
+
+                <!-- =============================== -->
+                <!-- ОПИС -->
+                <!-- =============================== -->
+
+                <div class="info-section align-items-start">
+
+                    <div class="info-icon">
+
+                        <i class="bi bi-text-paragraph"></i>
+
+                    </div>
+
+                    <div class="flex-grow-1">
+
+                        <div class="info-title mb-2">
+                            Опис
+                        </div>
+
+                        {% if event.description %}
+
+                            <div class="description">
+
+                                {{ event.description|linebreaks }}
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="text-muted">
+                                Опис події не додано.
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <hr>
+
+
+                <!-- =============================== -->
+                <!-- ОНЛАЙН-ЗУСТРІЧ -->
+                <!-- =============================== -->
+
+                {% if event.meeting_link %}
+
+                    <div class="info-section">
+
+                        <div class="info-icon">
+
+                            <i class="bi bi-camera-video"></i>
+
+                        </div>
+
+                        <div>
+
+                            <div class="info-title">
+                                Онлайн-зустріч
+                            </div>
+
+                            <a
+                                href="{{ event.meeting_link }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn btn-outline-primary mt-2"
+                            >
+
+                                <i class="bi bi-box-arrow-up-right"></i>
+
+                                Перейти до зустрічі
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                {% endif %}
+
+
+                <!-- =============================== -->
+                <!-- УЧАСНИКИ -->
+                <!-- =============================== -->
+
+                <div class="info-section align-items-start">
+
+                    <div class="info-icon">
+
+                        <i class="bi bi-people"></i>
+
+                    </div>
+
+                    <div class="flex-grow-1">
+
+                        <div class="info-title mb-3">
+                            Учасники
+
+                            <span class="badge text-bg-light ms-2">
+                                {{ guest_count }}
+                            </span>
+                        </div>
+
+
+                        {% if event.guest_list.all %}
+
+                            <div class="participants">
+
+                                {% for guest in event.guest_list.all %}
+
+                                    <div class="participant">
+
+                                        <div class="participant-avatar">
+
+                                            {{ guest.username|first|upper }}
+
+                                        </div>
+
+                                        <div>
+
+                                            <div class="fw-semibold">
+                                                {{ guest.get_full_name|default:guest.username }}
+                                            </div>
+
+                                            <small class="text-muted">
+                                                @{{ guest.username }}
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                {% empty %}
+
+                                    <div class="text-muted">
+                                        Учасників не вказано.
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="text-muted">
+                                Учасників не вказано.
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <hr>
+
+
+                <!-- =============================== -->
+                <!-- АВТОР -->
+                <!-- =============================== -->
+
+                <div class="info-section">
+
+                    <div class="info-icon">
+
+                        <i class="bi bi-person"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="info-title">
+                            Створив
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ event.author.get_full_name|default:event.author.username }}
+
+                        </div>
+
+                        <small class="text-muted">
+
+                            Створено
+                            {{ event.created_at|date:"d.m.Y H:i" }}
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================== -->
+                <!-- КНОПКИ -->
+                <!-- =============================== -->
+
+                <div class="d-flex justify-content-between align-items-center mt-5">
+
+                    <a
+                        href="{% url 'calendar' %}"
+                        class="btn btn-outline-secondary"
+                    >
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        До календаря
+
+                    </a>
+
+
+                    {% if user.is_superuser or user.is_staff %}
+
+                        <div class="d-flex gap-2">
+
+                            <a
+                                href="{% url 'event_update' event.pk %}"
+                                class="btn btn-outline-primary"
+                            >
+
+                                <i class="bi bi-pencil"></i>
+
+                                Редагувати
+
+                            </a>
+
+
+                            <a
+                                href="{% url 'event_delete' event.pk %}"
+                                class="btn btn-outline-danger"
+                            >
+
+                                <i class="bi bi-trash"></i>
+
+                                Видалити
+
+                            </a>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- =============================== -->
+        <!-- НИЖНЯ ПІДКАЗКА -->
+        <!-- =============================== -->
+
+        <div class="text-center text-muted small mt-3">
+
+            <i class="bi bi-info-circle"></i>
+
+            Інформація про подію
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- CSS -->
+<!-- ========================================= -->
+
+<style>
+
+    /* =============================== */
+    /* Верхня частина */
+    /* =============================== */
+
+    .event-header {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 18px;
+
+        padding: 30px;
+
+        background: linear-gradient(
+            135deg,
+            #0d6efd,
+            #0b5ed7
+        );
+
+        color: white;
+
+    }
+
+
+    .event-icon {
+
+        width: 58px;
+
+        height: 58px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: rgba(255,255,255,0.15);
+
+        border-radius: 14px;
+
+        font-size: 1.7rem;
+
+    }
+
+
+    /* =============================== */
+    /* Інформаційний блок */
+    /* =============================== */
+
+    .info-section {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 16px;
+
+        padding: 8px 0;
+
+    }
+
+
+    .info-icon {
+
+        width: 42px;
+
+        height: 42px;
+
+        min-width: 42px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: #e7f1ff;
+
+        color: #0d6efd;
+
+        border-radius: 10px;
+
+        font-size: 1.15rem;
+
+    }
+
+
+    .info-title {
+
+        font-size: 0.85rem;
+
+        color: #6c757d;
+
+        margin-bottom: 2px;
+
+    }
+
+
+    .info-value {
+
+        font-size: 1rem;
+
+        font-weight: 600;
+
+    }
+
+
+    /* =============================== */
+    /* Опис */
+    /* =============================== */
+
+    .description {
+
+        line-height: 1.7;
+
+        color: #495057;
+
+    }
+
+
+    /* =============================== */
+    /* Учасники */
+    /* =============================== */
+
+    .participants {
+
+        display: grid;
+
+        grid-template-columns: repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+        gap: 10px;
+
+    }
+
+
+    .participant {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        padding: 10px;
+
+        background: #f8f9fa;
+
+        border-radius: 8px;
+
+    }
+
+
+    .participant-avatar {
+
+        width: 38px;
+
+        height: 38px;
+
+        min-width: 38px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: #0d6efd;
+
+        color: white;
+
+        border-radius: 50%;
+
+        font-weight: 600;
+
+    }
+
+
+    /* =============================== */
+    /* Кнопки */
+    /* =============================== */
+
+    .btn {
+
+        border-radius: 8px;
+
+    }
+
+
+    /* =============================== */
+    /* Мобільна версія */
+    /* =============================== */
+
+    @media (max-width: 576px) {
+
+        .event-header {
+
+            padding: 22px;
+
+        }
+
+
+        .event-header h1 {
+
+            font-size: 1.5rem;
+
+        }
+
+
+        .card-body {
+
+            padding: 1.25rem !important;
+
+        }
+
+
+        .participants {
+
+            grid-template-columns: 1fr;
+
+        }
+
+
+        .info-section {
+
+            align-items: flex-start;
+
+        }
+
+    }
+
+</style>
+
+{% endblock %}
