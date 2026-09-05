@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ announcement.title }} — Оголошення {% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Кнопка повернення -->
+        <a href="{% url 'advertisement:list' %}" class="btn btn-outline-secondary btn-sm mb-3">
+            <i class="bi bi-arrow-left me-1"></i>Назад до всіх оголошень
+        </a>
+
+        <div class="card shadow-sm border-0">
+            <!-- Якщо є зображення, виводимо його зверху -->
+            {% if announcement.image %}
+                <img src="{{ announcement.image.url }}" class="card-img-top" alt="{{ announcement.title }}" style="max-height: 400px; object-fit: cover;">
+            {% endif %}
+
+            <div class="card-body p-4">
+                <!-- Статус та дата -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    {% if announcement.is_important %}
+                        <span class="badge bg-danger fs-6">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>Важливе
+                        </span>
+                    {% else %}
+                        <span class="badge bg-info text-dark fs-6">Оголошення</span>
+                    {% endif %}
+                    
+                    <span class="text-muted small">
+                        <i class="bi bi-clock me-1"></i>{{ announcement.created_at|date:"d.m.Y H:i" }}
+                    </span>
+                </div>
+
+                <!-- Заголовок -->
+                <h2 class="fw-bold mb-3">{{ announcement.title }}</h2>
+
+                <hr class="my-3">
+
+                <!-- Текст оголошення -->
+                <div class="fs-5 lh-base my-4 text-break">
+                    {{ announcement.content|linebreaks }}
+                </div>
+
+                <hr class="my-3">
+
+                <!-- Автор та дії (для модераторів) -->
+                <div class="d-flex justify-content-between align-items-center pt-2">
+                    <span class="text-muted small">
+                        <i class="bi bi-person-circle me-1"></i>Опублікував(ла): 
+                        <strong class="text-dark">{{ announcement.author.get_full_name|default:announcement.author.username }}</strong>
+                    </span>
+
+                    <!-- Якщо заходить адмін/модератор, він бачить кнопки керування -->
+                    {% if request.user.is_authenticated and request.user.is_staff %}
+                        <div class="btn-group btn-group-sm">
+                            <a href="{% url 'advertisement:edit' announcement.pk %}" class="btn btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Редагувати
+                            </a>
+                            <a href="{% url 'advertisement:delete' announcement.pk %}" class="btn btn-outline-danger">
+                                <i class="bi bi-trash"></i> Видалити
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

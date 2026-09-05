@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %} 
+    {% if object %}Редагування оголошення{% else %}Створення оголошення{% endif %} — Портал групи 
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white py-3">
+                <h4 class="m-0 fw-bold">
+                    {% if object %}
+                        <i class="bi bi-pencil-square me-2"></i>Редагувати оголошення
+                    {% else %}
+                        <i class="bi bi-plus-circle me-2"></i>Створити оголошення
+                    {% endif %}
+
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post" novalidate enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Заголовок -->
+                    <div class="mb-3">
+                        <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                            Заголовок оголошення
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger small mt-1">{{ form.title.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+
+
+                    <!-- Текст оголошення -->
+                    <div class="mb-3">
+                        <label for="{{ form.content.id_for_label }}" class="form-label fw-bold">
+                            Текст оголошення
+                        </label>
+                        {{ form.content }}
+                        {% if form.content.errors %}
+                             <div class="text-danger small mt-1">{{ form.content.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                    <!-- Зображення -->
+                    <div class="mb-3">
+                        <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">
+                            Зображення
+                        </label>
+                        {{ form.image }}
+                        {% if form.image.errors %}
+                            <div class="text-danger small mt-1">{{ form.image.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                    <!-- Прапорці (Чекбокси) -->
+                    <div class="card bg-light border-0 p-3 mb-4">
+                        <div class="form-check form-switch mb-2">
+                            {{ form.is_important }}
+                            <label class="form-check-label fw-bold text-danger" for="{{ form.is_important.id_for_label }}">
+                                Закріпити як важливе
+                            </label>
+                        </div>
+                        <div class="form-check form-switch">
+                            {{ form.is_active }}
+                            <label class="form-check-label fw-bold text-secondary" for="{{ form.is_active.id_for_label }}">
+                                Відображати на сайті (Активне)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки дій -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'advertisement:list' %}" class="btn btn-outline-secondary">
+                            Скасувати
+                        </a>
+                        <button type="submit" class="btn btn-success fw-bold px-4">
+                            {% if object %}Зберегти зміни{% else %}Опублікувати{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
