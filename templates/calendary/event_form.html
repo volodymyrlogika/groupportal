@@ -1,0 +1,692 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if object %}
+        Редагування події
+    {% else %}
+        Створення події
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-xl-9">
+
+        
+
+        <div class="mb-4">
+
+            <a
+                href="{% url 'calendar' %}"
+                class="text-decoration-none text-secondary"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Повернутися до календаря
+            </a>
+
+            <h1 class="fw-bold mt-3 mb-1">
+
+    {% if object %}
+
+        <i class="bi bi-pencil-square text-primary"></i>
+        Редагування події
+
+    {% else %}
+
+        <i class="bi bi-calendar-plus text-primary"></i>
+        Створення події
+
+    {% endif %}
+
+</h1>
+
+<p class="text-muted mb-0">
+
+    {% if object %}
+
+        Змініть інформацію про подію
+
+    {% else %}
+
+        Додайте нову подію для вашої групи
+
+    {% endif %}
+
+</p>
+
+        </div>
+
+
+    
+
+        <div class="row g-4">
+
+
+        
+
+            <div class="col-lg-8">
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body p-4 p-md-5">
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+
+                            
+
+                            <div class="form-section mb-4">
+
+                                <div class="section-title mb-3">
+
+                                    <i class="bi bi-info-circle text-primary"></i>
+
+                                    <span>
+                                        Основна інформація
+                                    </span>
+
+                                </div>
+
+
+                                <!-- Назва -->
+
+                                <div class="mb-3">
+
+                                    <label
+                                        for="{{ form.title.id_for_label }}"
+                                        class="form-label fw-semibold"
+                                    >
+                                        Назва події
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    {{ form.title }}
+
+                                    {% if form.title.errors %}
+
+                                        <div class="text-danger small mt-1">
+                                            {{ form.title.errors }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- Опис -->
+
+                                <div>
+
+                                    <label
+                                        for="{{ form.description.id_for_label }}"
+                                        class="form-label fw-semibold"
+                                    >
+                                        Опис
+                                    </label>
+
+                                    {{ form.description }}
+
+                                    <div class="form-text">
+                                        Коротко опишіть, що буде відбуватися на події.
+                                    </div>
+
+                                    {% if form.description.errors %}
+
+                                        <div class="text-danger small mt-1">
+                                            {{ form.description.errors }}
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <hr class="my-4">
+
+
+                        
+                            <div class="form-section mb-4">
+
+                                <div class="section-title mb-3">
+
+                                    <i class="bi bi-clock text-primary"></i>
+
+                                    <span>
+                                        Дата та час
+                                    </span>
+
+                                </div>
+
+
+                                <div class="row g-3">
+
+
+                                    <!-- Початок -->
+
+                                    <div class="col-md-6">
+
+                                        <label
+                                            for="{{ form.start_time.id_for_label }}"
+                                            class="form-label fw-semibold"
+                                        >
+                                            Початок
+                                            <span class="text-danger">*</span>
+                                        </label>
+
+                                        {{ form.start_time }}
+
+                                        {% if form.start_time.errors %}
+
+                                            <div class="text-danger small mt-1">
+                                                {{ form.start_time.errors }}
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <!-- Завершення -->
+
+                                    <div class="col-md-6">
+
+                                        <label
+                                            for="{{ form.end_time.id_for_label }}"
+                                            class="form-label fw-semibold"
+                                        >
+                                            Завершення
+                                            <span class="text-danger">*</span>
+                                        </label>
+
+                                        {{ form.end_time }}
+
+                                        {% if form.end_time.errors %}
+
+                                            <div class="text-danger small mt-1">
+                                                {{ form.end_time.errors }}
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <hr class="my-4">
+
+
+                        
+
+                            <div class="form-section mb-4">
+
+                                <div class="section-title mb-3">
+
+                                    <i class="bi bi-geo-alt text-primary"></i>
+
+                                    <span>
+                                        Місце проведення
+                                    </span>
+
+                                </div>
+
+
+                                <label
+                                    for="{{ form.location.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Місце
+                                </label>
+
+                                {{ form.location }}
+
+                                <div class="form-text">
+                                    Наприклад: Кабінет 204, актова зала тощо.
+                                </div>
+
+                                {% if form.location.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ form.location.errors }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <hr class="my-4">
+
+
+                
+
+                            <div class="form-section mb-4">
+
+                                <div class="section-title mb-3">
+
+                                    <i class="bi bi-link-45deg text-primary"></i>
+
+                                    <span>
+                                        Онлайн-зустріч
+                                    </span>
+
+                                </div>
+
+
+                                <label
+                                    for="{{ form.meeting_link.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Посилання
+                                </label>
+
+                                {{ form.meeting_link }}
+
+                                <div class="form-text">
+                                    Необов'язково. Наприклад, посилання на Google Meet або Zoom.
+                                </div>
+
+                                {% if form.meeting_link.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ form.meeting_link.errors }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <hr class="my-4">
+
+
+                        
+
+                            <div class="form-section mb-4">
+
+                                <div class="section-title mb-3">
+
+                                    <i class="bi bi-people text-primary"></i>
+
+                                    <span>
+                                        Учасники
+                                    </span>
+
+                                </div>
+
+
+                                <label
+                                    for="{{ form.guest_list.id_for_label }}"
+                                    class="form-label fw-semibold"
+                                >
+                                    Запрошені користувачі
+                                </label>
+
+                                {{ form.guest_list }}
+
+                                <div class="form-text">
+                                    Можна вибрати декілька користувачів.
+                                </div>
+
+                                {% if form.guest_list.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ form.guest_list.errors }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                        
+
+                            {% if form.non_field_errors %}
+
+                                <div class="alert alert-danger">
+
+                                    <i class="bi bi-exclamation-triangle"></i>
+
+                                    {{ form.non_field_errors }}
+
+                                </div>
+
+                            {% endif %}
+
+
+                        
+
+                            <div
+                                class="d-flex justify-content-between align-items-center pt-3"
+                            >
+
+                                <a
+                                    href="{% url 'calendar' %}"
+                                    class="btn btn-outline-secondary"
+                                >
+                                    <i class="bi bi-x-lg"></i>
+                                    Скасувати
+                                </a>
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary px-4"
+                                >
+
+                                    {% if object %}
+
+                                        <i class="bi bi-check-lg"></i>
+                                        Зберегти зміни
+
+                                    {% else %}
+
+                                        <i class="bi bi-check-lg"></i>
+                                        Створити подію
+
+                                    {% endif %}
+
+                                </button>
+
+                            </div>
+
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        
+            <div class="col-lg-4">
+
+                <div class="card border-0 shadow-sm bg-light">
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex align-items-center mb-3">
+
+                            <div class="tip-icon me-3">
+
+                                <i class="bi bi-lightbulb"></i>
+
+                            </div>
+
+                            <h5 class="fw-bold mb-0">
+                                Порада
+                            </h5>
+
+                        </div>
+
+
+                        <p class="text-muted mb-3">
+                            Перед створенням події перевірте правильність
+                            введеної інформації.
+                        </p>
+
+
+                        <div class="tip-item">
+
+                            <i class="bi bi-check-circle text-success"></i>
+
+                            <span>
+                                Перевірте дату та час початку.
+                            </span>
+
+                        </div>
+
+
+                        <div class="tip-item">
+
+                            <i class="bi bi-check-circle text-success"></i>
+
+                            <span>
+                                Час завершення повинен бути пізніше початку.
+                            </span>
+
+                        </div>
+
+
+                        <div class="tip-item">
+
+                            <i class="bi bi-check-circle text-success"></i>
+
+                            <span>
+                                Додайте місце проведення, якщо воно відоме.
+                            </span>
+
+                        </div>
+
+
+                        <div class="tip-item">
+
+                            <i class="bi bi-check-circle text-success"></i>
+
+                            <span>
+                                За потреби додайте посилання на онлайн-зустріч.
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- Інформаційний блок -->
+
+                <div class="card border-0 shadow-sm mt-4">
+
+                    <div class="card-body p-4">
+
+                        <h6 class="fw-bold mb-3">
+
+                            <i class="bi bi-shield-check text-primary"></i>
+
+                            Хто може створювати події?
+
+                        </h6>
+
+                        <p class="text-muted small mb-0">
+
+                            Створювати, редагувати та видаляти події можуть
+                            адміністратори та модератори групи.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<style>
+
+
+    .section-title {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        font-size: 1.05rem;
+
+        font-weight: 700;
+
+    }
+
+
+    .section-title i {
+
+        font-size: 1.2rem;
+
+    }
+
+
+    form input[type="text"],
+    form input[type="url"],
+    form input[type="datetime-local"],
+    form input[type="datetime"],
+    form textarea,
+    form select {
+
+        display: block;
+
+        width: 100%;
+
+        padding: 0.65rem 0.8rem;
+
+        font-size: 0.95rem;
+
+        line-height: 1.5;
+
+        color: #212529;
+
+        background-color: #fff;
+
+        border: 1px solid #dee2e6;
+
+        border-radius: 0.5rem;
+
+        transition:
+            border-color 0.15s ease-in-out,
+            box-shadow 0.15s ease-in-out;
+
+    }
+
+
+
+    form textarea {
+
+        min-height: 130px;
+
+        resize: vertical;
+
+    }
+
+
+    #id_guest_list {
+
+        min-height: 160px;
+
+    }
+
+
+    form input:focus,
+    form textarea:focus,
+    form select:focus {
+
+        border-color: #86b7fe;
+
+        outline: 0;
+
+        box-shadow:
+            0 0 0 0.2rem rgba(13, 110, 253, 0.12);
+
+    }
+
+
+    .tip-icon {
+
+        width: 42px;
+
+        height: 42px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background-color: #e7f1ff;
+
+        color: #0d6efd;
+
+        border-radius: 10px;
+
+        font-size: 1.2rem;
+
+    }
+
+
+    .tip-item {
+
+        display: flex;
+
+        align-items: flex-start;
+
+        gap: 10px;
+
+        margin-bottom: 12px;
+
+        font-size: 0.9rem;
+
+        color: #6c757d;
+
+    }
+
+
+    .tip-item i {
+
+        margin-top: 2px;
+
+        flex-shrink: 0;
+
+    }
+
+
+
+    .btn {
+
+        border-radius: 0.5rem;
+
+    }
+
+
+    /* ================================= */
+    /* Мобільна версія */
+    /* ================================= */
+
+    @media (max-width: 576px) {
+
+        .card-body {
+
+            padding: 1.25rem !important;
+
+        }
+
+        h1 {
+
+            font-size: 1.7rem;
+
+        }
+
+    }
+
+</style>
+
+{% endblock %}

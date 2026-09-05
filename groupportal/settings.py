@@ -39,7 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'advertisement',
+    'calendary',
+    'journal',
+    'portfolio',
+    'voting',
+    'poll',
+    'forum',
     'accounts',
+    
 
 ]
 
@@ -134,5 +141,11 @@ LOGOUT_REDIRECT_URL = '/login/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 AUTH_USER_MODEL = 'auth.User'
 
+
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'journal:all_grades'
+LOGOUT_REDIRECT_URL = 'login'
