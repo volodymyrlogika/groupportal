@@ -10,6 +10,7 @@ from accounts.views import CustomLoginView, CustomLogoutView, RegisterView
 urlpatterns = [
     
     path('admin/', admin.site.urls),
+    path('advertisement/', include('advertisement.urls')),
     path('calendar/', include('calendary.urls')),
     path('journal/', include('journal.urls')),
 
